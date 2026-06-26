@@ -8,4 +8,4 @@ spring:
 jira:
   apiUrl: https://project.atlassian.net
   username: email@gmail.com
-  apiToken: 
+  apiToken: your api token here
