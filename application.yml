@@ -6,6 +6,6 @@ spring:
         model: mistral
 
 jira:
-  apiUrl: https://genaiauto.atlassian.net
-  username: nirajpatel8470@gmail.com
-  apiToken: ATATT3xFfGF03C3BDShHt1cDMhDJiQmMAVGHOHlYcFf6J19rTDrkEAaygHtSyBgYUdjgJQXc8DdscJ23c4riMQnBACChu7nPfb-yZ93MmRdZzagRu-ALh93Bgxn8OFDRCPrsAXkW1jQTtVp8AI2nvJ5r9qI6AF5G4-cvLM7RsUBhGn6QSN1KonE=BE2F4BA6       
+  apiUrl: https://project.atlassian.net
+  username: email@gmail.com
+  apiToken: 
