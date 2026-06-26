@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>GenAI Jira Test Generator</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5 mb-5">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+
+            <h3 class="mb-0">
+                GenAI Jira Test Generator
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    User Story Key
+
+                </label>
+
+                <input
+                        id="storyKey"
+                        class="form-control"
+                        placeholder="Example : SCRUM-5">
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="form-label">
+
+                    Generation Type
+
+                </label>
+
+                <select
+                        id="type"
+                        class="form-select">
+
+                    <option value="TEST_CASES">
+                        UI Test Cases
+                    </option>
+
+                    <option value="API_TEST_CASES">
+                        API Test Cases
+                    </option>
+
+                    <option value="SELENIUM_SCRIPT">
+                        Selenium Script
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="text-center">
+
+                <button
+                        id="generateBtn"
+                        class="btn btn-primary btn-lg"
+                        onclick="generate()">
+
+                    Generate Test Cases
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="loadingDiv"
+         class="text-center mt-4"
+         style="display:none;">
+
+        <div class="spinner-border text-primary"></div>
+
+        <h5 class="mt-3">
+
+            Generating Test Cases...
+
+        </h5>
+
+    </div>
+
+
+    <div id="successAlert"
+         class="alert alert-success mt-4"
+         style="display:none;">
+
+        Test Cases uploaded successfully.
+
+    </div>
+
+    <div id="errorAlert"
+         class="alert alert-danger mt-4"
+         style="display:none;">
+    </div>
+
+
+    <div class="mt-5">
+
+        <h3>
+
+            Generated Test Cases
+
+        </h3>
+
+        <div id="resultContainer"
+             class="accordion mt-3">
+
+        </div>
+
+    </div>
+
+
+    <div class="text-center mt-4">
+
+        <button
+                id="uploadBtn"
+                class="btn btn-success btn-lg"
+                style="display:none;"
+                onclick="uploadToJira()">
+
+            Upload Test Cases to Jira
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function generate() {
+
+    document.getElementById("successAlert").style.display="none";
+    document.getElementById("errorAlert").style.display="none";
+
+    const storyKey=document.getElementById("storyKey").value;
+
+    const type=document.getElementById("type").value;
+
+    if(storyKey===""){
+
+        alert("Please enter Story Key");
+
+        return;
+    }
+
+    document.getElementById("generateBtn").disabled=true;
+
+    document.getElementById("loadingDiv").style.display="block";
+
+    document.getElementById("uploadBtn").style.display="none";
+
+    try{
+
+        const response=await fetch(
+
+            `/api/v1/generate?storyKey=${storyKey}&type=${type}`
+
+        );
+
+        if(!response.ok){
+
+            throw new Error(await response.text());
+
+        }
+
+        const data=await response.json();
+
+        renderTestCases(data.generatedContent);
+
+        document.getElementById("uploadBtn").style.display="inline-block";
+
+    }
+    catch(e){
+
+        document.getElementById("errorAlert").style.display="block";
+
+        document.getElementById("errorAlert").innerHTML=e;
+
+    }
+    finally{
+
+        document.getElementById("loadingDiv").style.display="none";
+
+        document.getElementById("generateBtn").disabled=false;
+
+    }
+
+}
+
+
+function renderTestCases(text){
+
+    let html="";
+
+    let testcases=text.split("====================================");
+
+    let index=1;
+
+    for(let tc of testcases){
+
+        if(tc.trim()===""){
+
+            continue;
+
+        }
+
+        html+=`
+
+        <div class="accordion-item">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button collapsed"
+
+                    type="button"
+
+                    data-bs-toggle="collapse"
+
+                    data-bs-target="#tc${index}">
+
+                    Test Case ${index}
+
+                </button>
+
+            </h2>
+
+            <div id="tc${index}"
+
+                 class="accordion-collapse collapse">
+
+                <div class="accordion-body">
+
+                    <pre style="white-space:pre-wrap;">${tc}</pre>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+        index++;
+
+    }
+
+    document.getElementById("resultContainer").innerHTML=html;
+
+}
+
+
+
+async function uploadToJira(){
+
+    document.getElementById("successAlert").style.display="none";
+
+    document.getElementById("errorAlert").style.display="none";
+
+    try{
+
+        const response=await fetch(
+
+            "/api/v1/upload",
+
+            {
+
+                method:"POST"
+
+            }
+
+        );
+
+        if(!response.ok){
+
+            throw new Error(await response.text());
+
+        }
+
+        const message=await response.text();
+
+        document.getElementById("successAlert").style.display="block";
+
+        document.getElementById("successAlert").innerHTML=message;
+
+        document.getElementById("uploadBtn").style.display="none";
+
+    }
+    catch(e){
+
+        document.getElementById("errorAlert").style.display="block";
+
+        document.getElementById("errorAlert").innerHTML=e;
+
+    }
+
+}
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
