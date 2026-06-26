@@ -1,7 +1,7 @@
 spring:
   ai:
     ollama:
-      url: http://localhost:11434
+      url: 
       chat:
         model: mistral
 
