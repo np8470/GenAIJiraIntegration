@@ -8,7 +8,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import com.genai.ollamarestapi.exception.JiraException;
 import com.genai.ollamarestapi.model.GenerateResponse;
 import com.genai.ollamarestapi.model.GenerationType;
+import com.genai.ollamarestapi.model.UploadResponse;
 import com.genai.ollamarestapi.model.ai.TestCase;
+import com.genai.ollamarestapi.model.jira.JiraApiProperties;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class TestCaseOrchestratorService {
         private final JiraDataService jiraDataService;
         private final AiService aiService;
         private final JiraService jiraService;
+        private final JiraApiProperties jiraApiProperties;
 
         public GenerateResponse generateOnly(
                         String storyKey,
@@ -58,7 +61,7 @@ public class TestCaseOrchestratorService {
         }
 
         @SuppressWarnings("unchecked")
-        public String uploadSelectedToJira(
+        public UploadResponse uploadSelectedToJira(
                         List<Integer> selectedIndexes,
                         HttpSession session) {
 
@@ -67,27 +70,52 @@ public class TestCaseOrchestratorService {
                 List<TestCase> testCases = (List<TestCase>) session.getAttribute("generatedTestCases");
 
                 if (storyKey == null || testCases == null) {
-                        return "Please generate test cases first.";
+                        return new UploadResponse(
+                                        false,
+                                        "Please generate test cases first.",
+                                        List.of(),
+                                        jiraApiProperties.getApiUrl());
                 }
 
-                for (Integer index : selectedIndexes) {
+                int uploadedCount = 0;
+                List<String> uploadedKeys = new java.util.ArrayList<>();
+                try {
+                        for (Integer index : selectedIndexes) {
 
-                        TestCase tc = testCases.get(index);
+                                TestCase tc = testCases.get(index);
 
-                        String jiraDescription =
-                                        // aiService.buildDescription(tc);
-                                        jiraService.buildJiraDescription(tc);
+                                /* String jiraDescription =
+                                                // aiService.buildDescription(tc);
+                                                jiraService.buildJiraDescription(tc); */
 
-                        String testCaseKey = jiraService.createTestCase(
-                                        "SCRUM",
-                                        tc);
+                                String testCaseKey = jiraService.createTestCase(
+                                                "SCRUM",
+                                                tc);
 
-                        jiraService.linkIssue(
-                                        storyKey,
-                                        testCaseKey);
+                                jiraService.linkIssue(
+                                                storyKey,
+                                                testCaseKey);
+
+                                uploadedKeys.add(testCaseKey);
+                                uploadedCount++;
+                        }
+
+                        return new UploadResponse(
+                                        true,
+                                        uploadedCount + " test case(s) uploaded successfully to Jira.",
+                                        uploadedKeys,
+                                        jiraApiProperties.getApiUrl());
+
+                } catch (Exception ex) {
+
+                        ex.printStackTrace();
+
+                        return new UploadResponse(
+                                        false,
+                                        "Upload failed : " + ex.getMessage(),
+                                        uploadedKeys,
+                                        jiraApiProperties.getApiUrl());
                 }
-
-                return "Selected test cases uploaded successfully.";
         }
 
         private String buildJiraDescription(TestCase tc) {

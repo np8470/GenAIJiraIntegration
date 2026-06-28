@@ -107,9 +107,6 @@
     <div id="successAlert"
          class="alert alert-success mt-4"
          style="display:none;">
-
-        Test Cases uploaded successfully.
-
     </div>
 
     <div id="errorAlert"
@@ -312,33 +309,99 @@ function toggleAll(selectAll){
 
 
 
-async function uploadToJira(){
+async function uploadToJira() {
 
-    let selected=[];
+    document.getElementById("successAlert").style.display = "none";
+    document.getElementById("errorAlert").style.display = "none";
+
+    let selected = [];
 
     document
         .querySelectorAll(".testcaseCheckbox")
-        .forEach(cb=>{
+        .forEach(cb => {
 
-            if(cb.checked){
-
+            if (cb.checked) {
                 selected.push(parseInt(cb.value));
-
             }
 
         });
 
-    const response=await fetch("/api/v1/upload",{
+    if (selected.length === 0) {
 
-        method:"POST",
+        document.getElementById("errorAlert").style.display = "block";
+        document.getElementById("errorAlert").innerHTML =
+            "Please select at least one test case.";
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+        return;
+    }
 
-        body:JSON.stringify(selected)
+    document.getElementById("uploadBtn").disabled = true;
 
-    });
+    try {
+
+        const response = await fetch("/api/v1/upload", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(selected)
+
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+
+            document.getElementById("successAlert").style.display = "block";
+
+            let html = result.message;
+
+            if (result.uploadedKeys &&
+                result.uploadedKeys.length > 0) {
+
+                html += "<br><br><b>Created Jira Test Cases:</b><br>";
+
+result.uploadedKeys.forEach(key => {
+
+    html += `
+        <a href="${result.jiraBaseUrl}/browse/${key}"
+           target="_blank"
+           class="badge bg-primary text-decoration-none me-2 mb-2">
+           ${key}
+        </a>
+    `;
+
+});
+
+                html += "</ul>";
+            }
+
+            document.getElementById("successAlert").innerHTML = html;
+
+        } else {
+
+            document.getElementById("errorAlert").style.display = "block";
+
+            document.getElementById("errorAlert").innerHTML =
+                result.message;
+
+        }
+
+    } catch (e) {
+
+        document.getElementById("errorAlert").style.display = "block";
+
+        document.getElementById("errorAlert").innerHTML =
+            "Upload failed : " + e;
+
+    } finally {
+
+        document.getElementById("uploadBtn").disabled = false;
+
+    }
 
 }
 </script>

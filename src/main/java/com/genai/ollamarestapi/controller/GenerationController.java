@@ -2,6 +2,7 @@ package com.genai.ollamarestapi.controller;
 
 import com.genai.ollamarestapi.model.GenerateResponse;
 import com.genai.ollamarestapi.model.GenerationType;
+import com.genai.ollamarestapi.model.UploadResponse;
 import com.genai.ollamarestapi.service.TestCaseOrchestratorService;
 
 import jakarta.servlet.http.HttpSession;
@@ -31,7 +32,7 @@ public class GenerationController {
     }
 
     @PostMapping("/upload")
-    public String uploadToJira(@RequestBody List<Integer> selectedIndexes, HttpSession session) {
+    public UploadResponse uploadToJira(@RequestBody List<Integer> selectedIndexes, HttpSession session) {
 
         return service.uploadSelectedToJira(
             selectedIndexes,
