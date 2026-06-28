@@ -37,7 +37,9 @@ public class JiraDataService implements Function<JiraDataService.Request, JiraDa
             WebClient jiraWebClient) {
 
         this.jiraApiProperties = jiraApiProperties;
-
+        log.info("Username : {}", jiraApiProperties.getUsername());
+        log.info("Api URL  : {}", jiraApiProperties.getApiUrl());
+        log.info("Token    : {}", jiraApiProperties.getApiToken());
         this.webClient = jiraWebClient.mutate()
                 .baseUrl(jiraApiProperties.getApiUrl())
                 .defaultHeaders(headers ->

@@ -3,7 +3,9 @@ package com.genai.ollamarestapi.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import com.genai.ollamarestapi.exception.JiraException;
 import com.genai.ollamarestapi.model.GenerateResponse;
 import com.genai.ollamarestapi.model.GenerationType;
 import com.genai.ollamarestapi.model.ai.TestCase;
@@ -26,62 +28,113 @@ public class TestCaseOrchestratorService {
                         GenerationType type,
                         HttpSession session) {
 
-                JiraDataService.Response story = jiraDataService.apply(
-                                new JiraDataService.Request(storyKey));
+                try {
 
-                List<TestCase> testCases = aiService.generateTestCases(
-                                story.acceptanceCriteria(),
-                                type);
+                        JiraDataService.Response story = jiraDataService.apply(
+                                        new JiraDataService.Request(storyKey));
 
-                session.setAttribute(
-                                "storyKey",
-                                storyKey);
+                        List<TestCase> testCases = aiService.generateTestCases(
+                                        story.acceptanceCriteria(),
+                                        type);
 
-                session.setAttribute(
-                                "testCases",
-                                testCases);
+                        session.setAttribute("storyKey", storyKey);
+                        session.setAttribute("generationType", type);
+                        session.setAttribute("generatedTestCases", testCases);
 
-                String output = aiService.buildOutput(testCases);
+                        String output = aiService.buildOutput(testCases);
 
-                GenerateResponse response = new GenerateResponse();
+                        GenerateResponse response = new GenerateResponse();
 
-                response.setStoryKey(storyKey);
-                response.setGenerationType(type.name());
-                response.setGeneratedContent(output);
+                        response.setStoryKey(storyKey);
+                        response.setGenerationType(type.name());
+                        response.setGeneratedContent(output);
+                        response.setTestCases(testCases);
 
-                return response;
+                        return response;
+                } catch (WebClientResponseException.NotFound ex) {
+                        log.warn("Issue not found: {}", storyKey);
+                        throw new JiraException("Issue not found: " + storyKey);
+                }
         }
 
         @SuppressWarnings("unchecked")
-        public String uploadToJira(
+        public String uploadSelectedToJira(
+                        List<Integer> selectedIndexes,
                         HttpSession session) {
 
                 String storyKey = (String) session.getAttribute("storyKey");
 
-                List<TestCase> testCases = (List<TestCase>) session.getAttribute("testCases");
+                List<TestCase> testCases = (List<TestCase>) session.getAttribute("generatedTestCases");
 
                 if (storyKey == null || testCases == null) {
                         return "Please generate test cases first.";
                 }
 
-                for (TestCase tc : testCases) {
+                for (Integer index : selectedIndexes) {
 
-                        String description = jiraService.buildDescription(tc);
+                        TestCase tc = testCases.get(index);
 
-                        String key = jiraService.createTestCase(
+                        String jiraDescription =
+                                        // aiService.buildDescription(tc);
+                                        jiraService.buildJiraDescription(tc);
+
+                        String testCaseKey = jiraService.createTestCase(
                                         "SCRUM",
                                         tc);
 
                         jiraService.linkIssue(
                                         storyKey,
-                                        key);
+                                        testCaseKey);
                 }
 
-                session.removeAttribute("storyKey");
-                session.removeAttribute("testCases");
+                return "Selected test cases uploaded successfully.";
+        }
 
-                return testCases.size() +
-                                " test cases uploaded successfully.";
+        private String buildJiraDescription(TestCase tc) {
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.append("Description\n");
+                sb.append("-------------------------\n");
+                sb.append(nullToEmpty(tc.getDescription()));
+
+                sb.append("\n\nPriority\n");
+                sb.append("-------------------------\n");
+                sb.append(nullToEmpty(tc.getPriority()));
+
+                sb.append("\n\nType\n");
+                sb.append("-------------------------\n");
+                sb.append(nullToEmpty(tc.getType()));
+
+                sb.append("\n\nPrecondition\n");
+                sb.append("-------------------------\n");
+                sb.append(nullToEmpty(tc.getPrecondition()));
+
+                sb.append("\n\nSteps\n");
+                sb.append("-------------------------\n");
+
+                if (tc.getSteps() != null) {
+
+                        int i = 1;
+
+                        for (String step : tc.getSteps()) {
+
+                                sb.append(i++)
+                                                .append(". ")
+                                                .append(step)
+                                                .append("\n");
+                        }
+                }
+
+                sb.append("\nExpected Result\n");
+                sb.append("-------------------------\n");
+                sb.append(nullToEmpty(tc.getExpectedResult()));
+
+                return sb.toString();
+        }
+
+        private String nullToEmpty(String value) {
+                return value == null ? "" : value;
         }
 
         public String generateAndCreate(String storyKey, GenerationType type) {

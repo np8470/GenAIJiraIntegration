@@ -17,133 +17,139 @@ import com.genai.ollamarestapi.model.ai.TestCase;
 @Slf4j
 public class JiraService {
 
-        private final WebClient jiraWebClient;
+  private final WebClient jiraWebClient;
 
-        public String createTestCase(String projectKey, TestCase tc) {
-                String jiraDescription = buildDescription(tc);
-                String body = """
-                                {
-                                  "fields": {
-                                    "project": {
-                                      "key": "%s"
-                                    },
-                                    "summary": "%s",
-                                    "issuetype": {
-                                      "id": "10041"
-                                    },
-                                    "description": {
-                                      "type": "doc",
-                                      "version": 1,
-                                      "content": [
-                                        {
-                                          "type": "paragraph",
-                                          "content": [
-                                            {
-                                              "type": "text",
-                                              "text": "%s"
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    }
-                                  }
-                                }
-                                """.formatted(
-                                projectKey,
-                                escapeJson(tc.getTitle()),
-                                escapeJson(jiraDescription));
-
-                String response = jiraWebClient.post()
-                                .uri("/rest/api/3/issue")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(body)
-                                .retrieve()
-                                .bodyToMono(String.class)
-                                .block();
-                log.info("Jira Payload: {}", body);
-                return extractKey(response);
-        }
-
-        private String escapeJson(String value) {
-
-                if (value == null) {
-                        return "";
+  public String createTestCase(String projectKey, TestCase tc) {
+    String jiraDescription = buildJiraDescription(tc);
+    String body = """
+        {
+          "fields": {
+            "project": {
+              "key": "%s"
+            },
+            "summary": "%s",
+            "issuetype": {
+              "id": "10041"
+            },
+            "description": {
+              "type": "doc",
+              "version": 1,
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "%s"
+                    }
+                  ]
                 }
-
-                return value
-                                .replace("\\", "\\\\")
-                                .replace("\"", "\\\"")
-                                .replace("\n", "\\n")
-                                .replace("\r", "");
+              ]
+            }
+          }
         }
+        """.formatted(
+        projectKey,
+        escapeJson(tc.getTitle()),
+        escapeJson(jiraDescription));
 
-        public void linkIssue(String storyKey, String testCaseKey) {
+    String response = jiraWebClient.post()
+        .uri("/rest/api/3/issue")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(body)
+        .retrieve()
+        .bodyToMono(String.class)
+        .block();
+    log.info("Jira Payload: {}", body);
+    return extractKey(response);
+  }
 
-                String body = """
-                                {
-                                  "type": { "name": "Relates" },
-                                  "inwardIssue": { "key": "%s" },
-                                  "outwardIssue": { "key": "%s" }
-                                }
-                                """.formatted(storyKey, testCaseKey);
+  private String escapeJson(String value) {
 
-                jiraWebClient.post()
-                                .uri("/rest/api/3/issueLink")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(body)
-                                .retrieve()
-                                .bodyToMono(Void.class)
-                                .block();
+    if (value == null) {
+      return "";
+    }
 
-                log.info("Linked Jira issue {} -> {}", storyKey, testCaseKey);
+    return value
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace("\n", "\\n")
+        .replace("\r", "");
+  }
+
+  public void linkIssue(String storyKey, String testCaseKey) {
+
+    String body = """
+        {
+          "type": { "name": "Relates" },
+          "inwardIssue": { "key": "%s" },
+          "outwardIssue": { "key": "%s" }
         }
+        """.formatted(storyKey, testCaseKey);
 
-        private String extractKey(String response) {
-                try {
-                        return new JSONObject(response).getString("key");
-                } catch (Exception e) {
-                        throw new RuntimeException("Failed to parse Jira response", e);
-                }
-        }
+    jiraWebClient.post()
+        .uri("/rest/api/3/issueLink")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(body)
+        .retrieve()
+        .bodyToMono(Void.class)
+        .block();
 
-        public String buildDescription(TestCase tc) {
+    log.info("Linked Jira issue {} -> {}", storyKey, testCaseKey);
+  }
 
-                StringBuilder sb = new StringBuilder();
+  private String extractKey(String response) {
+    try {
+      return new JSONObject(response).getString("key");
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to parse Jira response", e);
+    }
+  }
 
-                sb.append("Description:\n")
-                                .append(tc.getDescription())
-                                .append("\n\n");
+  String buildJiraDescription(TestCase tc) {
 
-                sb.append("Priority: ")
-                                .append(tc.getPriority())
-                                .append("\n\n");
+    StringBuilder sb = new StringBuilder();
 
-                sb.append("Type: ")
-                                .append(tc.getType())
-                                .append("\n\n");
+    sb.append("Description\n");
+    sb.append("-------------------------\n");
+    sb.append(nullToEmpty(tc.getDescription()));
 
-                sb.append("Precondition:\n")
-                                .append(tc.getPrecondition())
-                                .append("\n\n");
+    sb.append("\n\nPriority\n");
+    sb.append("-------------------------\n");
+    sb.append(nullToEmpty(tc.getPriority()));
 
-                sb.append("Steps:\n");
+    sb.append("\n\nType\n");
+    sb.append("-------------------------\n");
+    sb.append(nullToEmpty(tc.getType()));
 
-                if (tc.getSteps() != null) {
+    sb.append("\n\nPrecondition\n");
+    sb.append("-------------------------\n");
+    sb.append(nullToEmpty(tc.getPrecondition()));
 
-                        int i = 1;
+    sb.append("\n\nSteps\n");
+    sb.append("-------------------------\n");
 
-                        for (String step : tc.getSteps()) {
+    if (tc.getSteps() != null) {
 
-                                sb.append(i++)
-                                                .append(". ")
-                                                .append(step)
-                                                .append("\n");
-                        }
-                }
+      int i = 1;
 
-                sb.append("\nExpected Result:\n")
-                                .append(tc.getExpectedResult());
+      for (String step : tc.getSteps()) {
 
-                return sb.toString();
-        }
+        sb.append(i++)
+            .append(". ")
+            .append(step)
+            .append("\n");
+      }
+    }
+
+    sb.append("\nExpected Result\n");
+    sb.append("-------------------------\n");
+    sb.append(nullToEmpty(tc.getExpectedResult()));
+
+    return sb.toString();
+  }
+
+  private String nullToEmpty(String value) {
+    return value == null ? "" : value;
+  }
 }

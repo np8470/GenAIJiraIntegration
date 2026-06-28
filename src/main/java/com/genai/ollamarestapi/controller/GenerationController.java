@@ -7,6 +7,8 @@ import com.genai.ollamarestapi.service.TestCaseOrchestratorService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,9 +31,11 @@ public class GenerationController {
     }
 
     @PostMapping("/upload")
-    public String uploadToJira(HttpSession session) {
+    public String uploadToJira(@RequestBody List<Integer> selectedIndexes, HttpSession session) {
 
-        return service.uploadToJira(session);
+        return service.uploadSelectedToJira(
+            selectedIndexes,
+            session);
     }
 
 }

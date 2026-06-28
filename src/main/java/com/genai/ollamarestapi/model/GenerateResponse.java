@@ -16,5 +16,6 @@ public class GenerateResponse {
     private String storyKey;
     private String generationType;
     private String generatedContent;
+    private List<TestCase> testCases;
 
 }

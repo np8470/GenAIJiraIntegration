@@ -2,6 +2,9 @@ package com.genai.ollamarestapi.model.jira;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import lombok.Data;
+
+@Data
 @ConfigurationProperties(prefix = "jira")
 public class JiraApiProperties {
 
@@ -9,7 +12,7 @@ public class JiraApiProperties {
     private String apiToken;
     private String apiUrl;
 
-    // Getters and Setters
+    /* // Getters and Setters
     public String getUsername() {
         return username;
     }
@@ -41,5 +44,5 @@ public class JiraApiProperties {
                 ", apiToken='" + apiToken + '\'' +
                 ", apiUrl='" + apiUrl + '\'' +
                 '}';
-    }
+    } */
 }
