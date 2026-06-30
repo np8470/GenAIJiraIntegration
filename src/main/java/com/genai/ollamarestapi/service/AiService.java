@@ -1,15 +1,17 @@
 package com.genai.ollamarestapi.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genai.ollamarestapi.client.OllamaClient;
 import com.genai.ollamarestapi.exception.AIException;
 import com.genai.ollamarestapi.model.GenerationType;
 import com.genai.ollamarestapi.model.ai.TestCase;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -17,109 +19,132 @@ import java.util.List;
 @Slf4j
 public class AiService {
 
-        private final OllamaClient ollamaClient;
+    private final OllamaClient ollamaClient;
+    private final ObjectMapper objectMapper;
+    private final PromptBuilderService promptBuilderService;
 
-        private final ObjectMapper objectMapper;
-        private final PromptBuilderService promptBuilderService;
+    public List<TestCase> generateTestCases(
+            String userStoryDescription,
+            GenerationType type) {
 
-        public List<TestCase> generateTestCases(
-                        String userStoryDescription, GenerationType type) {
+        try {
 
-                try {
+            String prompt = promptBuilderService.buildPrompt(
+                    userStoryDescription,
+                    type);
 
-                        String prompt = promptBuilderService.buildPrompt(
-                                        userStoryDescription,
-                                        type);
+            String response = ollamaClient.generate(prompt);
 
-                        String response = ollamaClient.generate(prompt);
+            log.info("AI Response:\n{}", response);
 
-                        log.info("AI Response: {}", response);
-                        System.out.println("=================================");
-                        System.out.println("RAW OLLAMA RESPONSE");
-                        System.out.println(response);
-                        System.out.println("=================================");
+            return parseResponse(response);
 
-                        String json = extractJson(response);
+        } catch (Exception e) {
 
-                        List<TestCase> testCases = objectMapper.readValue(
-                                        json,
-                                        new TypeReference<List<TestCase>>() {
-                                        });
-                        log.info("Parsed Test Cases = {}", testCases);
+            log.error("AI Parsing Failed", e);
 
-                        return testCases;
+            throw new AIException(
+                    "Failed to generate test cases",
+                    e);
+        }
+    }
 
-                } catch (Exception e) {
+    /**
+     * Parses every response format returned by Ollama.
+     */
+    private List<TestCase> parseResponse(String response) throws Exception {
 
-                        throw new AIException(
-                                        "Failed to generate test cases",
-                                        e);
-                }
+        String json = extractJson(response);
+
+        JsonNode root = objectMapper.readTree(json);
+
+        if (root.isArray()) {
+
+            return objectMapper.readValue(
+                    json,
+                    new TypeReference<List<TestCase>>() {
+                    });
         }
 
-        private String extractJson(String response) {
+        if (root.isObject()) {
 
-                int start = response.indexOf("[");
-                int end = response.lastIndexOf("]");
+            TestCase tc = objectMapper.treeToValue(
+                    root,
+                    TestCase.class);
 
-                if (start == -1 || end == -1) {
-                        throw new RuntimeException(
-                                        "No JSON array found in AI response");
-                }
-
-                return response.substring(start, end + 1);
+            return Collections.singletonList(tc);
         }
 
-        public String buildOutput(List<TestCase> testCases) {
+        throw new RuntimeException("Unsupported AI response.");
+    }
 
-                StringBuilder sb = new StringBuilder();
-                log.info("Number of test cases = {}", testCases.size());
-                for (TestCase tc : testCases) {
-                        log.info("Test Case = {}", tc);
-                        sb.append("====================================\n");
-                        sb.append("Test Case ID: ")
-                                        .append(tc.getId())
-                                        .append("\n");
+    /**
+     * Extract JSON object or array from AI response.
+     */
+    private String extractJson(String response) {
 
-                        sb.append("Title: ")
-                                        .append(tc.getTitle())
-                                        .append("\n");
+        response = response.trim();
 
-                        sb.append("Description: ")
-                                        .append(tc.getDescription())
-                                        .append("\n");
+        // remove markdown if present
+        response = response.replace("```json", "");
+        response = response.replace("```", "").trim();
 
-                        sb.append("Priority: ")
-                                        .append(tc.getPriority())
-                                        .append("\n");
+        int objStart = response.indexOf("{");
+        int arrStart = response.indexOf("[");
 
-                        sb.append("Type: ")
-                                        .append(tc.getType())
-                                        .append("\n");
-
-                        sb.append("Precondition: ")
-                                        .append(tc.getPrecondition())
-                                        .append("\n");
-
-                        sb.append("Steps:\n");
-
-                        if (tc.getSteps() != null) {
-                                int i = 1;
-                                for (String step : tc.getSteps()) {
-                                        sb.append(i++)
-                                                        .append(". ")
-                                                        .append(step)
-                                                        .append("\n");
-                                }
-                        }
-
-                        sb.append("Expected Result: ")
-                                        .append(tc.getExpectedResult())
-                                        .append("\n");
-
-                        sb.append("====================================\n\n");
-                }
-
-                return sb.toString();
+        if (objStart == -1 && arrStart == -1) {
+            throw new RuntimeException("No JSON found.");
         }
+
+        if (arrStart != -1 &&
+                (objStart == -1 || arrStart < objStart)) {
+
+            int arrEnd = response.lastIndexOf("]");
+
+            return response.substring(arrStart, arrEnd + 1);
+        }
+
+        int objEnd = response.lastIndexOf("}");
+
+        return response.substring(objStart, objEnd + 1);
+    }
+
+    public String buildOutput(List<TestCase> testCases) {
+
+        StringBuilder sb = new StringBuilder();
+
+        for (TestCase tc : testCases) {
+
+            sb.append("====================================\n");
+            sb.append("Test Case ID: ").append(tc.getId()).append("\n");
+            sb.append("Title: ").append(tc.getTitle()).append("\n");
+            sb.append("Description: ").append(tc.getDescription()).append("\n");
+            sb.append("Priority: ").append(tc.getPriority()).append("\n");
+            sb.append("Type: ").append(tc.getType()).append("\n");
+            sb.append("Precondition: ").append(tc.getPrecondition()).append("\n");
+
+            sb.append("Steps:\n");
+
+            if (tc.getSteps() != null) {
+
+                int i = 1;
+
+                for (String step : tc.getSteps()) {
+
+                    sb.append(i++)
+                            .append(". ")
+                            .append(step)
+                            .append("\n");
+                }
+            }
+
+            sb.append("Expected Result: ")
+                    .append(tc.getExpectedResult())
+                    .append("\n");
+
+            sb.append("====================================\n\n");
+        }
+
+        return sb.toString();
+    }
 }

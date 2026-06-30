@@ -30,44 +30,52 @@ public class PromptBuilderService {
     private String manualPrompt(String story) {
 
         return """
-                Generate Manual QA Test Cases.
 
-                IMPORTANT
+Generate comprehensive Manual test cases.
 
-                Return ONLY JSON array.
-                Example:
-                                                                    [
-                                                                      {
-                                                                        "id":"TC_001",
-                                                                        "title":"Verify Login",
-                                                                        "description":"Verify login functionality",
-                                                                        "priority":"High",
-                                                                        "type":"Functional",
-                                                                        "precondition":"User exists",
-                                                                        "steps":[
-                                                                          "Open login page",
-                                                                          "Enter username",
-                                                                          "Enter password",
-                                                                          "Click login"
-                                                                        ],
-                                                                        "expectedResult":"User logged in successfully"
-                                                                      }
-                                                                    ]
+IMPORTANT RULES
 
-                Each JSON object MUST contain:
+1. Return ONLY valid JSON.
+2. Do NOT use markdown.
+3. Do NOT use explanations.
+4. Do NOT number test cases.
+5. Response MUST start with [
+6. Response MUST end with ]
 
-                id
-                title
-                description
-                priority
-                type
-                precondition
-                steps
-                expectedResult
+Schema
 
-                User Story:
-                %s
-                """.formatted(story);
+[
+  {
+    "id":"TC_001",
+    "title":"",
+    "description":"",
+    "priority":"High",
+    "type":"Functional",
+    "precondition":"",
+    "steps":[
+      ""
+    ],
+    "expectedResult":""
+  }
+]
+
+expectedResult MUST be a string.
+
+DO NOT return an array.
+
+Correct:
+
+"expectedResult":"Login successful"
+
+Wrong:
+
+"expectedResult":[
+  "Login successful"
+]
+
+                                                User Story:
+                                                %s
+                                                """.formatted(story);
 
     }
 
