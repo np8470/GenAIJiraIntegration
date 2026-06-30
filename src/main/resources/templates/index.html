@@ -7,215 +7,455 @@
 
     <title>GenAI Jira Test Generator</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        @keyframes fadeIn {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(15px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0);
+
+            }
+
+        }
+
+        .copy-btn {
+
+            margin-left: 10px;
+
+        }
+
+        .jira-item {
+
+            margin-bottom: 10px;
+
+        }
+
+        .card {
+
+            border-radius: 12px;
+
+        }
+
+        .card {
+
+            margin-bottom: 25px;
+
+        }
+    </style>
 
 </head>
 
 <body class="bg-light">
 
-<div class="container mt-5 mb-5">
+    <div class="container py-5">
 
-    <div class="card shadow">
+        <div class="row justify-content-center">
 
-        <div class="card-header bg-primary text-white">
+            <div class="col-xl-9 col-lg-10">
 
-            <h3 class="mb-0">
-                GenAI Jira Test Generator
-            </h3>
+                <div class="container mt-5 mb-5">
 
-        </div>
+                    <div class="card shadow">
 
-        <div class="card-body">
+                        <div class="card-header bg-primary text-white">
 
-            <div class="mb-3">
+                            <h3 class="mb-0">
+                                Test Case Generator
+                            </h3>
 
-                <label class="form-label">
+                        </div>
 
-                    User Story Key
+                        <div class="card-body">
 
-                </label>
+                            <div class="mb-3">
 
-                <input
-                        id="storyKey"
-                        class="form-control"
-                        placeholder="Example : SCRUM-5">
+                                <label class="form-label">
+
+                                    WORK ITEM ID
+
+                                </label>
+
+                                <input id="storyKey" class="form-control" placeholder="Example : SCRUM-5">
+
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label class="form-label">
+
+                                    Generation Type
+
+                                </label>
+
+                                <select id="type" class="form-select">
+
+                                    <option value="TEST_CASES">
+                                        UI Test Cases
+                                    </option>
+
+                                    <option value="API_TEST_CASES">
+                                        API Test Cases
+                                    </option>
+
+                                    <option value="SELENIUM_SCRIPT">
+                                        Selenium Script
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="text-center">
+
+                                <button id="generateBtn" class="btn btn-primary btn-lg" onclick="generate()">
+
+                                    Generate Test Cases
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="loadingDiv" class="text-center mt-4" style="display:none;">
+
+                        <div class="spinner-border text-primary"></div>
+
+                        <h5 class="mt-3">
+
+                            Generating Test Cases...
+
+                        </h5>
+
+                        <div id="uploadProgressCard" class="card mt-4" style="display:none;">
+
+                            <div id="uploadProgressContainer" class="mt-4" style="display:none;">
+
+                                <label class="form-label">
+
+                                    Uploading Test Cases...
+
+                                </label>
+
+                                <div class="progress" style="height:28px;">
+
+                                    <div id="uploadProgressBar"
+                                        class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                                        style="width:0%;">
+
+                                        0%
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div id="uploadProgressText" class="mt-3 text-muted">
+
+                                Preparing upload...
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div id="uploadSummary" class="card mt-4 border-success" style="display:none;">
+
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            Upload Summary
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div id="uploadSummaryContent">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div id="successAlert" class="card border-success shadow mt-4"
+                    style="display:none; animation:fadeIn .6s;">
+
+                    <div class="card-header bg-success text-white">
+
+                        <h5 class="mb-0">
+
+                            ✅ Upload Completed Successfully
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row text-center">
+
+                            <div class="col-md-4">
+
+                                <h1 class="display-5 fw-bold text-success" id="uploadedCount">
+
+                                    0
+
+                                </h1>
+
+                                <span class="text-success">
+                                    ✔ Uploaded
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <h1 class="display-5 fw-bold text-danger" id="failedCount">
+
+                                    0
+
+                                </h1>
+
+                                <span class="text-danger">
+                                    ✖ Failed
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <h1 class="display-5 fw-bold text-primary" id="uploadDuration">
+
+                                    0s
+
+                                </h1>
+
+                                Duration
+
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <div id="jiraLinksContainer"></div>
+
+                    </div>
+
+                </div>
+
+                <div id="errorAlert" class="alert alert-danger mt-4" style="display:none;">
+                </div>
+
+
+                <div class="card shadow-lg mt-4">
+
+                    <div class="card-header">
+
+                        <h4 class="mb-0">
+
+                            Generated Test Cases
+
+                        </h4>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div id="resultContainer" class="accordion">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="text-center mt-4">
+
+                    <button id="uploadBtn" class="btn btn-success btn-lg px-5" style="display:none;"
+                        onclick="uploadToJira()">
+
+                        Upload Test Cases to Jira
+
+                    </button>
+
+                </div>
 
             </div>
 
-            <div class="mb-4">
 
-                <label class="form-label">
+            <script>
 
-                    Generation Type
+                function showToast(message) {
 
-                </label>
+                    document.getElementById("toastBody").innerHTML = message;
 
-                <select
-                        id="type"
-                        class="form-select">
+                    const toast = new bootstrap.Toast(
+                        document.getElementById("statusToast")
+                    );
 
-                    <option value="TEST_CASES">
-                        UI Test Cases
-                    </option>
+                    toast.show();
+                }
 
-                    <option value="API_TEST_CASES">
-                        API Test Cases
-                    </option>
+                function copyIssueKey(issueKey) {
 
-                    <option value="SELENIUM_SCRIPT">
-                        Selenium Script
-                    </option>
+                    navigator.clipboard.writeText(issueKey);
 
-                </select>
+                    showToast(issueKey + " copied.");
 
-            </div>
+                }
 
-            <div class="text-center">
+                function updateProgress(percent) {
 
-                <button
-                        id="generateBtn"
-                        class="btn btn-primary btn-lg"
-                        onclick="generate()">
+                    const bar =
+                        document.getElementById("uploadProgressBar");
 
-                    Generate Test Cases
+                    bar.style.width = percent + "%";
 
-                </button>
+                    bar.innerHTML = percent + "%";
 
-            </div>
+                    if (percent == 100) {
 
-        </div>
+                        bar.classList.remove("bg-primary");
 
-    </div>
+                        bar.classList.add("bg-success");
 
+                    }
+                }
 
-    <div id="loadingDiv"
-         class="text-center mt-4"
-         style="display:none;">
+                function scrollToSuccess() {
 
-        <div class="spinner-border text-primary"></div>
+                    document.getElementById("successAlert")
+                        .scrollIntoView({
 
-        <h5 class="mt-3">
+                            behavior: "smooth",
 
-            Generating Test Cases...
+                            block: "start"
 
-        </h5>
+                        });
 
-    </div>
+                }
 
+                function setUploading(uploading) {
 
-    <div id="successAlert"
-         class="alert alert-success mt-4"
-         style="display:none;">
-    </div>
+                    document.getElementById("generateBtn").disabled = uploading;
 
-    <div id="errorAlert"
-         class="alert alert-danger mt-4"
-         style="display:none;">
-    </div>
+                    document.getElementById("uploadBtn").disabled = uploading;
 
+                    if (uploading) {
 
-    <div class="mt-5">
+                        document.getElementById("uploadBtn").innerHTML = `
+        <span class="spinner-border spinner-border-sm"></span>
+        Uploading...
+        `;
 
-        <h3>
+                    }
+                    else {
 
-            Generated Test Cases
+                        document.getElementById("uploadBtn").innerHTML =
+                            "Upload Test Cases to Jira";
 
-        </h3>
+                    }
 
-        <div id="resultContainer"
-             class="accordion mt-3">
+                }
+                async function generate() {
+                    document.getElementById("uploadSummary").style.display = "none";
+                    document.getElementById("uploadProgressCard").style.display = "none";
 
-        </div>
+                    document.getElementById("successAlert").style.display = "none";
+                    document.getElementById("errorAlert").style.display = "none";
 
-    </div>
+                    const storyKey = document.getElementById("storyKey").value;
 
+                    const type = document.getElementById("type").value;
 
-    <div class="text-center mt-4">
+                    if (storyKey === "") {
 
-        <button
-                id="uploadBtn"
-                class="btn btn-success btn-lg"
-                style="display:none;"
-                onclick="uploadToJira()">
+                        alert("Please enter Story Key");
 
-            Upload Test Cases to Jira
+                        return;
+                    }
 
-        </button>
+                    document.getElementById("generateBtn").disabled = true;
 
-    </div>
+                    document.getElementById("loadingDiv").style.display = "block";
 
-</div>
+                    document.getElementById("uploadBtn").style.display = "none";
 
+                    try {
 
-<script>
+                        const response = await fetch(
 
-async function generate() {
+                            `/api/v1/generate?storyKey=${storyKey}&type=${type}`
 
-    document.getElementById("successAlert").style.display="none";
-    document.getElementById("errorAlert").style.display="none";
+                        );
 
-    const storyKey=document.getElementById("storyKey").value;
+                        if (!response.ok) {
 
-    const type=document.getElementById("type").value;
+                            const text = await response.text();
 
-    if(storyKey===""){
+                            console.error("Generate API Error:");
+                            console.error(text);
 
-        alert("Please enter Story Key");
+                            throw new Error(text);
+                        }
 
-        return;
-    }
+                        const data = await response.json();
 
-    document.getElementById("generateBtn").disabled=true;
+                        renderTestCases(data.testCases);
 
-    document.getElementById("loadingDiv").style.display="block";
+                        document.getElementById("uploadBtn").style.display = "inline-block";
 
-    document.getElementById("uploadBtn").style.display="none";
+                    }
+                    catch (e) {
 
-    try{
+                        document.getElementById("errorAlert").style.display = "block";
 
-        const response=await fetch(
+                        document.getElementById("errorAlert").innerHTML = e;
 
-            `/api/v1/generate?storyKey=${storyKey}&type=${type}`
+                    }
+                    finally {
 
-        );
+                        document.getElementById("loadingDiv").style.display = "none";
 
-        if(!response.ok){
+                        document.getElementById("generateBtn").disabled = false;
 
-            throw new Error(await response.text());
+                    }
 
-        }
+                }
 
-        const data=await response.json();
 
-        renderTestCases(data.testCases);
+                function renderTestCases(testCases) {
 
-        document.getElementById("uploadBtn").style.display="inline-block";
+                    let html = "";
 
-    }
-    catch(e){
-
-        document.getElementById("errorAlert").style.display="block";
-
-        document.getElementById("errorAlert").innerHTML=e;
-
-    }
-    finally{
-
-        document.getElementById("loadingDiv").style.display="none";
-
-        document.getElementById("generateBtn").disabled=false;
-
-    }
-
-}
-
-
-function renderTestCases(testCases){
-
-    let html = "";
-
-    html += `
+                    html += `
         <div class="mb-3">
 
             <input
@@ -231,9 +471,9 @@ function renderTestCases(testCases){
         </div>
     `;
 
-    testCases.forEach((tc,index)=>{
+                    testCases.forEach((tc, index) => {
 
-        html += `
+                        html += `
 
         <div class="accordion-item">
 
@@ -251,7 +491,11 @@ function renderTestCases(testCases){
                         value="${index}"
                         onclick="event.stopPropagation()">
 
-                    <strong>${tc.title}</strong>
+                    <span class="fw-semibold">
+
+    ${tc.title}
+
+</span>
 
                 </button>
 
@@ -274,7 +518,7 @@ function renderTestCases(testCases){
 
                     <ol>
 
-                        ${tc.steps.map(s=>`<li>${s}</li>`).join("")}
+                        ${tc.steps.map(s => `<li>${s}</li>`).join("")}
 
                     </ol>
 
@@ -293,120 +537,241 @@ function renderTestCases(testCases){
         </div>
 
         `;
-    });
+                    });
 
-    document.getElementById("resultContainer").innerHTML = html;
+                    document.getElementById("resultContainer").innerHTML = html;
 
-    document.getElementById("uploadBtn").style.display = "inline-block";
-}
+                    document.getElementById("uploadBtn").style.display = "inline-block";
+                }
 
-function toggleAll(selectAll){
+                function toggleAll(selectAll) {
 
-    document.querySelectorAll(".testcaseCheckbox")
-        .forEach(cb=>cb.checked=selectAll.checked);
+                    document.querySelectorAll(".testcaseCheckbox")
+                        .forEach(cb => cb.checked = selectAll.checked);
 
-}
+                }
 
 
 
-async function uploadToJira() {
+                async function uploadToJira() {
+                    const startTime = Date.now();
+                    document.getElementById("successAlert").style.display = "none";
+                    document.getElementById("errorAlert").style.display = "none";
 
-    document.getElementById("successAlert").style.display = "none";
-    document.getElementById("errorAlert").style.display = "none";
+                    let selected = [];
 
-    let selected = [];
+                    document.querySelectorAll(".testcaseCheckbox")
+                        .forEach(cb => {
 
-    document
-        .querySelectorAll(".testcaseCheckbox")
-        .forEach(cb => {
+                            if (cb.checked) {
 
-            if (cb.checked) {
-                selected.push(parseInt(cb.value));
-            }
+                                selected.push(parseInt(cb.value));
 
-        });
+                            }
 
-    if (selected.length === 0) {
+                        });
 
-        document.getElementById("errorAlert").style.display = "block";
-        document.getElementById("errorAlert").innerHTML =
-            "Please select at least one test case.";
+                    if (selected.length === 0) {
 
-        return;
-    }
+                        showToast("Please select at least one test case.");
 
-    document.getElementById("uploadBtn").disabled = true;
+                        return;
 
-    try {
+                    }
 
-        const response = await fetch("/api/v1/upload", {
+                    // Disable buttons during upload
+                    document.getElementById("uploadBtn").disabled = true;
+                    document.getElementById("generateBtn").disabled = true;
 
-            method: "POST",
+                    // Show progress bar
+                    document.getElementById("uploadProgressContainer").style.display = "block";
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+                    updateProgress(10);
 
-            body: JSON.stringify(selected)
+                    try {
 
-        });
+                        const response = await fetch("/api/v1/upload", {
 
-        const result = await response.json();
+                            method: "POST",
 
-        if (response.ok && result.success) {
+                            headers: {
 
-            document.getElementById("successAlert").style.display = "block";
+                                "Content-Type": "application/json"
 
-            let html = result.message;
+                            },
 
-            if (result.uploadedKeys &&
-                result.uploadedKeys.length > 0) {
+                            body: JSON.stringify(selected)
 
-                html += "<br><br><b>Created Jira Test Cases:</b><br>";
+                        });
 
-result.uploadedKeys.forEach(key => {
+                        updateProgress(60);
 
-    html += `
-        <a href="${result.jiraBaseUrl}/browse/${key}"
-           target="_blank"
-           class="badge bg-primary text-decoration-none me-2 mb-2">
-           ${key}
+                        const result = await response.json();
+
+                        updateProgress(100);
+
+                        if (!result.success) {
+
+                            throw new Error(result.message);
+
+                        }
+
+                        // Upload Summary
+                        document.getElementById("uploadedCount").innerHTML =
+                            result.uploadedCount;
+
+                        document.getElementById("failedCount").innerHTML =
+                            result.failedCount;
+
+                        // Jira Links
+                        const jiraLinks = result.jiraLinks || [];
+
+                        let html = "";
+
+                        if (jiraLinks.length > 0) {
+
+                            html += "<h5 class='mb-3'>Created Jira Test Cases</h5>";
+
+                            html += "<button class='btn btn-primary btn-sm mb-3' ";
+                            html += "onclick='openAllJiraLinks()'>";
+                            html += "Open All Test Cases";
+                            html += "</button>";
+
+                            html += "<ul class='list-group'>";
+
+                            jiraLinks.forEach(link => {
+
+                                const issueKey = link.substring(link.lastIndexOf("/") + 1);
+
+                                html += `
+            <li class="list-group-item">
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+
+    <div>
+
+        ✅
+
+        <a href="${link}" target="_blank">
+
+            ${issueKey}
+
         </a>
-    `;
 
-});
+    </div>
 
-                html += "</ul>";
-            }
+    <div>
 
-            document.getElementById("successAlert").innerHTML = html;
+        
+    </div>
 
-        } else {
+</div>
 
-            document.getElementById("errorAlert").style.display = "block";
+            </li>
+        `;
 
-            document.getElementById("errorAlert").innerHTML =
-                result.message;
+                            });
 
-        }
+                            html += "</ul>";
+                        }
 
-    } catch (e) {
+                        document.getElementById("jiraLinksContainer").innerHTML = html;
 
-        document.getElementById("errorAlert").style.display = "block";
+                        document.getElementById("successAlert").style.display = "block";
 
-        document.getElementById("errorAlert").innerHTML =
-            "Upload failed : " + e;
+                        const duration =
+                            ((Date.now() - startTime) / 1000).toFixed(2);
 
-    } finally {
+                        document.getElementById("uploadDuration").innerHTML =
+                            duration + " sec";
 
-        document.getElementById("uploadBtn").disabled = false;
+                        scrollToSuccess();
 
-    }
+                        showToast(result.message);
 
-}
-</script>
+                    }
+                    catch (e) {
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                        document.getElementById("errorAlert").style.display = "block";
+
+                        document.getElementById("errorAlert").innerHTML =
+                            e.message;
+
+                        showToast("Upload failed.");
+
+                    }
+                    finally {
+
+                        document.getElementById("uploadBtn").disabled = false;
+                        document.getElementById("generateBtn").disabled = false;
+
+                        setTimeout(() => {
+
+                            document.getElementById("uploadProgressContainer").style.display = "none";
+
+                            updateProgress(0);
+
+                        }, 800);
+
+                    }
+
+                }
+
+
+                function openAllJiraLinks() {
+
+                    document
+
+                        .querySelectorAll("#jiraLinksContainer a")
+
+                        .forEach(link => {
+
+                            window.open(
+
+                                link.href,
+
+                                "_blank"
+
+                            );
+
+                        });
+
+                }
+            </script>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+            <div class="toast-container position-fixed top-0 end-0 p-3">
+
+                <div id="statusToast" class="toast" role="alert">
+
+                    <div class="toast-header">
+
+                        <strong class="me-auto">
+
+                            GenAI Jira
+
+                        </strong>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="toast">
+                        </button>
+
+                    </div>
+
+                    <div id="toastBody" class="toast-body">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    </div>
 
 </body>
 

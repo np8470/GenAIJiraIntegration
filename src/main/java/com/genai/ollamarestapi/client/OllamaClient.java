@@ -23,28 +23,33 @@ public class OllamaClient {
 
     public String generate(String prompt) {
 
-        Map<String, Object> request =
-                Map.of(
-                        "model", model,
-                        "prompt", prompt,
-                        "stream", false
-                );
+        Map<String, Object> request = Map.of(
+                "model", model,
+                "prompt", prompt,
+                "stream", false);
 
-        log.info("Calling Ollama...");
+        log.info("Ollama URL : {}", ollamaUrl);
+        log.info("Model      : {}", model);
 
-        Map<?, ?> response =
-                webClientBuilder.build()
-                        .post()
-                        .uri(ollamaUrl + "/api/generate")
-                        .bodyValue(request)
-                        .retrieve()
-                        .bodyToMono(Map.class)
-                        .block();
+        try {
 
-        if (response == null) {
-            throw new RuntimeException("No response from Ollama");
+            Map<?, ?> response = webClientBuilder.build()
+                    .post()
+                    .uri(ollamaUrl + "/api/generate")
+                    .bodyValue(request)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block();
+
+            log.info("Ollama Response : {}", response);
+
+            return String.valueOf(response.get("response"));
+
+        } catch (Exception ex) {
+
+            log.error("Ollama Error", ex);
+
+            throw ex;
         }
-
-        return String.valueOf(response.get("response"));
     }
 }

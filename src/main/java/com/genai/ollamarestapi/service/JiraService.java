@@ -3,9 +3,8 @@ package com.genai.ollamarestapi.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-
-
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,6 +17,13 @@ import com.genai.ollamarestapi.model.ai.TestCase;
 public class JiraService {
 
   private final WebClient jiraWebClient;
+
+  @Value("${jira.apiUrl}")
+  private String jiraUrl;
+
+  public String getBrowseUrl(String issueKey) {
+    return jiraUrl + "/browse/" + issueKey;
+  }
 
   public String createTestCase(String projectKey, TestCase tc) {
     String jiraDescription = buildJiraDescription(tc);
@@ -152,4 +158,5 @@ public class JiraService {
   private String nullToEmpty(String value) {
     return value == null ? "" : value;
   }
+
 }

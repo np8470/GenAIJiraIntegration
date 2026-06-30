@@ -24,7 +24,8 @@ public class GenerationController {
             @RequestParam String storyKey,
             @RequestParam String type,
             HttpSession session) {
-
+                System.out.println("Story Key = " + storyKey);
+                System.out.println("Type = " + type);
         return service.generateOnly(
                 storyKey,
                 GenerationType.valueOf(type),

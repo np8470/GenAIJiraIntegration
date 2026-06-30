@@ -7,15 +7,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class UploadResponse {
 
     private boolean success;
 
     private String message;
 
-    private List<String> uploadedKeys;
+    private int uploadedCount;
 
-    private String jiraBaseUrl;
+    private int failedCount;
+
+    private List<String> jiraLinks;
+
 }
