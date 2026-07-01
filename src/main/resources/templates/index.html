@@ -8,209 +8,9 @@
     <title>Test Case Generator</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="/css/style.css">
     <style>
-        @keyframes fadeIn {
 
-            from {
-
-                opacity: 0;
-
-                transform: translateY(15px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform: translateY(0);
-
-            }
-
-        }
-
-        .copy-btn {
-
-            margin-left: 10px;
-
-        }
-
-        .jira-item {
-
-            margin-bottom: 10px;
-
-        }
-
-        .card {
-
-            border-radius: 12px;
-
-        }
-
-        .card {
-
-            margin-bottom: 25px;
-
-        }
-        .accordion-button{
-
-    transition:all .25s ease;
-
-}
-
-.accordion-collapse{
-
-    transition:all .25s ease;
-
-}
-
-/* ---------- DARK MODE ---------- */
-
-body.dark-mode{
-
-    background:#121212 !important;
-
-    color:#f5f5f5;
-
-}
-
-body.dark-mode .card{
-
-    background:#1e1e1e;
-
-    color:#ffffff;
-
-    border:1px solid #444;
-
-}
-
-body.dark-mode .card-header{
-
-    background:#212529 !important;
-
-}
-
-body.dark-mode .accordion-item{
-
-    background:#242424;
-
-    color:white;
-
-}
-
-body.dark-mode .accordion-button{
-
-    background:#2d2d2d;
-
-    color:white;
-
-}
-
-body.dark-mode .accordion-button:not(.collapsed){
-
-    background:#343a40;
-
-    color:white;
-
-}
-
-body.dark-mode .accordion-body{
-
-    background:#1e1e1e;
-
-    color:white;
-
-}
-
-body.dark-mode .form-control,
-
-body.dark-mode .form-select{
-
-    background:#2c2c2c;
-
-    color:white;
-
-    border-color:#555;
-
-}
-
-body.dark-mode .form-control::placeholder{
-
-    color:#cccccc;
-
-}
-
-body.dark-mode .list-group-item{
-
-    background:#2a2a2a;
-
-    color:white;
-
-    border-color:#555;
-
-}
-
-body.dark-mode .alert-success{
-
-    background:#184d2b;
-
-    color:white;
-
-}
-
-body.dark-mode .alert-danger{
-
-    background:#5c1c24;
-
-    color:white;
-
-}
-
-body.dark-mode .toast{
-
-    background:#2a2a2a;
-
-    color:white;
-
-}
-
-body.dark-mode a{
-
-    color:#6cb6ff;
-
-}
-body.dark-mode .btn-outline-primary{
-
-    color:#9ecbff;
-
-    border-color:#9ecbff;
-
-}
-
-body.dark-mode .btn-outline-secondary{
-
-    color:#ddd;
-
-    border-color:#999;
-
-}
-
-body.dark-mode .btn-outline-success{
-
-    color:#8be28b;
-
-    border-color:#8be28b;
-
-}
-
-body.dark-mode .btn-outline-danger{
-
-    color:#ff9898;
-
-    border-color:#ff9898;
-
-}
 
     </style>
 
@@ -228,31 +28,26 @@ body.dark-mode .btn-outline-danger{
 
                     <div class="card shadow">
 
-                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <div
+                            class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
 
-    <h3 class="mb-0">
-        GenAI Jira Test Generator
-    </h3>
+                            <h3 class="mb-0">
+                                Test Case Generator
+                            </h3>
 
-    <div class="form-check form-switch">
+                            <div class="form-check form-switch">
 
-        <input
-                class="form-check-input"
-                type="checkbox"
-                id="darkModeSwitch"
-                onchange="toggleDarkMode()">
+                                <input class="form-check-input" type="checkbox" id="darkModeSwitch">
 
-        <label
-                class="form-check-label text-white"
-                for="darkModeSwitch">
+                                <label class="form-check-label text-white" for="darkModeSwitch">
 
-            🌙 Dark Mode
+                                    🌙 Dark Mode
 
-        </label>
+                                </label>
 
-    </div>
+                            </div>
 
-</div>
+                        </div>
 
                         <div class="card-body">
 
@@ -296,7 +91,7 @@ body.dark-mode .btn-outline-danger{
 
                             <div class="text-center">
 
-                                <button id="generateBtn" class="btn btn-primary btn-lg" onclick="generate()">
+                                <button id="generateBtn" class="btn btn-primary btn-lg">
 
                                     Generate Test Cases
 
@@ -311,946 +106,300 @@ body.dark-mode .btn-outline-danger{
 
                     <div id="loadingDiv" class="text-center mt-4" style="display:none;">
 
-                        <div class="spinner-border text-primary"></div>
+                                    <div class="spinner-border text-primary"></div>
 
-                        <h5 class="mt-3">
+                                    <h5 class="mt-3">
 
-                            Generating Test Cases...
+                                        Generating Test Cases...
 
-                        </h5>
+                                    </h5>
 
-                        <div id="uploadProgressCard" class="card mt-4" style="display:none;">
+                                    <div id="uploadProgressCard" class="card mt-4" style="display:none;">
 
-                            <div id="uploadProgressContainer" class="mt-4" style="display:none;">
+                                        <div id="uploadProgressContainer" class="mt-4" style="display:none;">
 
-                                <label class="form-label">
+                                            <label class="form-label">
 
-                                    Uploading Test Cases...
+                                                Uploading Test Cases...
 
-                                </label>
+                                            </label>
 
-                                <div class="progress" style="height:28px;">
+                                            <div class="progress" style="height:28px;">
 
-                                    <div id="uploadProgressBar"
-                                        class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
-                                        style="width:0%;">
+                                                <div id="uploadProgressBar"
+                                                    class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                                                    style="width:0%;">
 
-                                        0%
+                                                    0%
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div id="uploadProgressText" class="mt-3 text-muted">
+
+                                            Preparing upload...
+
+                                        </div>
 
                                     </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div id="uploadSummary" class="card mt-4 border-success" style="display:none;">
+
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    Upload Summary
+
+                                </h5>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div id="uploadSummaryContent">
 
                                 </div>
 
                             </div>
 
-                            <div id="uploadProgressText" class="mt-3 text-muted">
+                        </div>
 
-                                Preparing upload...
+                        <div id="successAlert" class="card border-success shadow mt-4"
+                            style="display:none; animation:fadeIn .6s;">
+
+                            <div class="card-header bg-success text-white">
+
+                                <h5 class="mb-0">
+
+                                    ✅ Upload Completed Successfully
+
+                                </h5>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="row text-center">
+
+                                    <div class="col-md-4">
+
+                                        <h1 class="display-5 fw-bold text-success" id="uploadedCount">
+
+                                            0
+
+                                        </h1>
+
+                                        <span class="text-success">
+                                            ✔ Uploaded
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-4">
+
+                                        <h1 class="display-5 fw-bold text-danger" id="failedCount">
+
+                                            0
+
+                                        </h1>
+
+                                        <span class="text-danger">
+                                            ✖ Failed
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-4">
+
+                                        <h1 class="display-5 fw-bold text-primary" id="uploadDuration">
+
+                                            0s
+
+                                        </h1>
+
+                                        Duration
+
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                                <div id="jiraLinksContainer"></div>
 
                             </div>
 
                         </div>
 
-                    </div>
-
-                </div>
-
-
-                <div id="uploadSummary" class="card mt-4 border-success" style="display:none;">
-
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0">
-
-                            <i class="bi bi-check-circle-fill"></i>
-
-                            Upload Summary
-
-                        </h5>
-
-                    </div>
-
-                    <div class="card-body">
-
-                        <div id="uploadSummaryContent">
-
+                        <div id="errorAlert" class="alert alert-danger mt-4" style="display:none;">
                         </div>
 
-                    </div>
 
-                </div>
+                        <div class="card shadow-lg mt-4">
 
-                <div id="successAlert" class="card border-success shadow mt-4"
-                    style="display:none; animation:fadeIn .6s;">
+                            <div class="card-header">
 
-                    <div class="card-header bg-success text-white">
+                                <div class="row mt-4">
 
-                        <h5 class="mb-0">
+                                    <div class="col-md-8">
 
-                            ✅ Upload Completed Successfully
+                                        <input type="text" id="searchBox" class="form-control"
+                                            placeholder="Search test cases...">
 
-                        </h5>
+                                        <div class="row mt-3 mb-3">
 
-                    </div>
-
-                    <div class="card-body">
-
-                        <div class="row text-center">
-
-                            <div class="col-md-4">
-
-                                <h1 class="display-5 fw-bold text-success" id="uploadedCount">
-
-                                    0
-
-                                </h1>
-
-                                <span class="text-success">
-                                    ✔ Uploaded
-                                </span>
-
-                            </div>
-
-                            <div class="col-md-4">
-
-                                <h1 class="display-5 fw-bold text-danger" id="failedCount">
-
-                                    0
-
-                                </h1>
-
-                                <span class="text-danger">
-                                    ✖ Failed
-                                </span>
-
-                            </div>
-
-                            <div class="col-md-4">
-
-                                <h1 class="display-5 fw-bold text-primary" id="uploadDuration">
-
-                                    0s
-
-                                </h1>
-
-                                Duration
-
-                            </div>
-
-                        </div>
-
-                        <hr>
-
-                        <div id="jiraLinksContainer"></div>
-
-                    </div>
-
-                </div>
-
-                <div id="errorAlert" class="alert alert-danger mt-4" style="display:none;">
-                </div>
+                                            <div class="col-md-5">
 
 
-                <div class="card shadow-lg mt-4">
 
-                    <div class="card-header">
+                                            </div>
 
-                        <div class="row mt-4">
+                                            <div class="col-md-3">
 
-                            <div class="col-md-8">
+                                                <select id="prioritySort" class="form-select">
 
-                                <input type="text" id="searchBox" class="form-control"
-                                    placeholder="Search test cases..." onkeyup="filterTestCases()">
+                                                    <option value="NONE">
+                                                        Sort by Priority
+                                                    </option>
+
+                                                    <option value="HIGH">
+                                                        High → Medium → Low
+                                                    </option>
+
+                                                    <option value="LOW">
+                                                        Low → Medium → High
+                                                    </option>
+
+                                                </select>
+
+                                            </div>
+
+                                            <div class="col-md-4 text-end">
+
+                                                <span id="searchCount" class="badge bg-primary">
+
+                                                    0 Test Cases
+
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-4 text-end">
+
+                                        <span id="searchCount" class="badge bg-primary">
+
+                                            0 Test Cases
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
 
                                 <div class="row mt-3 mb-3">
 
-    <div class="col-md-5">
+                                    <div class="col-md-6">
 
-        
+                                        <button class="btn btn-outline-primary btn-sm" id="expandAllBtn">
 
-    </div>
+                                            📂 Expand All
 
-    <div class="col-md-3">
+                                        </button>
 
-        <select
-                id="prioritySort"
-                class="form-select"
-                onchange="sortTestCases()">
+                                        <button class="btn btn-outline-secondary btn-sm ms-2" id="collapseAllBtn">
 
-            <option value="NONE">
-                Sort by Priority
-            </option>
+                                            📁 Collapse All
 
-            <option value="HIGH">
-                High → Medium → Low
-            </option>
+                                        </button>
 
-            <option value="LOW">
-                Low → Medium → High
-            </option>
+                                    </div>
 
-        </select>
+                                </div>
 
-    </div>
+                                <h4 class="mb-0">
 
-    <div class="col-md-4 text-end">
+                                    Generated Test Cases
 
-        <span
-            id="searchCount"
-            class="badge bg-primary">
-
-            0 Test Cases
-
-        </span>
-
-    </div>
-
-</div>
+                                </h4>
 
                             </div>
 
-                            <div class="col-md-4 text-end">
+                            <div class="card-body">
 
-                                <span id="searchCount" class="badge bg-primary">
+                                <div id="resultContainer" class="accordion">
 
-                                    0 Test Cases
-
-                                </span>
+                                </div>
 
                             </div>
 
                         </div>
 
-                        <div class="row mt-3 mb-3">
 
-    <div class="col-md-6">
+                        <div class="text-center mt-4">
 
-        <button
-                class="btn btn-outline-primary btn-sm"
-                onclick="expandAll()">
+                            <button id="uploadBtn" class="btn btn-success btn-lg px-5" style="display:none;">
 
-            📂 Expand All
+                                Upload Test Cases to Jira
 
-        </button>
-
-        <button
-                class="btn btn-outline-secondary btn-sm ms-2"
-                onclick="collapseAll()">
-
-            📁 Collapse All
-
-        </button>
-
-    </div>
-
-</div>
-
-                        <h4 class="mb-0">
-
-                            Generated Test Cases
-
-                        </h4>
-
-                    </div>
-
-                    <div class="card-body">
-
-                        <div id="resultContainer" class="accordion">
+                            </button>
 
                         </div>
 
                     </div>
 
-                </div>
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+                    <script src="/js/app.js"></script>
+                    <script src="/js/ui.js"></script>
+                    <script src="/js/generator.js"></script>
+                    <script src="/js/upload.js"></script>
+                    <script src="/js/theme.js"></script>
 
-                <div class="text-center mt-4">
+                    <div class="toast-container position-fixed top-0 end-0 p-3">
 
-                    <button id="uploadBtn" class="btn btn-success btn-lg px-5" style="display:none;"
-                        onclick="uploadToJira()">
+                        <div id="statusToast" class="toast" role="alert">
 
-                        Upload Test Cases to Jira
+                            <div class="toast-header">
 
-                    </button>
+                                <strong class="me-auto">
 
-                </div>
+                                    GenAI Jira
 
-            </div>
+                                </strong>
 
+                                <button type="button" class="btn-close" data-bs-dismiss="toast">
+                                </button>
 
-            <script>
-            let generatedTestCases = [];
+                            </div>
 
+                            <div id="toastBody" class="toast-body">
 
+                            </div>
 
-                function showToast(message) {
-
-                    document.getElementById("toastBody").innerHTML = message;
-
-                    const toast = new bootstrap.Toast(
-                        document.getElementById("statusToast")
-                    );
-
-                    toast.show();
-                }
-
-                function copyIssueKey(issueKey) {
-
-                    navigator.clipboard.writeText(issueKey);
-
-                    showToast(issueKey + " copied.");
-
-                }
-
-                function updateProgress(percent) {
-
-                    const bar =
-                        document.getElementById("uploadProgressBar");
-
-                    bar.style.width = percent + "%";
-
-                    bar.innerHTML = percent + "%";
-
-                    if (percent == 100) {
-
-                        bar.classList.remove("bg-primary");
-
-                        bar.classList.add("bg-success");
-
-                    }
-                }
-
-                function scrollToSuccess() {
-
-                    document.getElementById("successAlert")
-                        .scrollIntoView({
-
-                            behavior: "smooth",
-
-                            block: "start"
-
-                        });
-
-                }
-
-                function setUploading(uploading) {
-
-                    document.getElementById("generateBtn").disabled = uploading;
-
-                    document.getElementById("uploadBtn").disabled = uploading;
-
-                    if (uploading) {
-
-                        document.getElementById("uploadBtn").innerHTML = `
-        <span class="spinner-border spinner-border-sm"></span>
-        Uploading...
-        `;
-
-                    }
-                    else {
-
-                        document.getElementById("uploadBtn").innerHTML =
-                            "Upload Test Cases to Jira";
-
-                    }
-
-                }
-                async function generate() {
-                    document.getElementById("uploadSummary").style.display = "none";
-                    document.getElementById("uploadProgressCard").style.display = "none";
-
-                    document.getElementById("successAlert").style.display = "none";
-                    document.getElementById("errorAlert").style.display = "none";
-
-                    const storyKey = document.getElementById("storyKey").value;
-
-                    const type = document.getElementById("type").value;
-
-                    if (storyKey === "") {
-
-                        alert("Please enter Story Key");
-
-                        return;
-                    }
-
-                    document.getElementById("generateBtn").disabled = true;
-
-                    document.getElementById("loadingDiv").style.display = "block";
-
-                    document.getElementById("uploadBtn").style.display = "none";
-
-                    try {
-
-                        const response = await fetch(
-
-                            `/api/v1/generate?storyKey=${storyKey}&type=${type}`
-
-                        );
-
-                        if (!response.ok) {
-
-                            const text = await response.text();
-
-                            console.error("Generate API Error:");
-                            console.error(text);
-
-                            throw new Error(text);
-                        }
-
-                        const data = await response.json();
-
-                        renderTestCases(data.testCases);
-
-                        document.getElementById("uploadBtn").style.display = "inline-block";
-
-                    }
-                    catch (e) {
-
-                        document.getElementById("errorAlert").style.display = "block";
-
-                        document.getElementById("errorAlert").innerHTML = e;
-
-                    }
-                    finally {
-
-                        document.getElementById("loadingDiv").style.display = "none";
-
-                        document.getElementById("generateBtn").disabled = false;
-
-                    }
-
-                }
-
-
-                function renderTestCases(testCases) {
-                    
-                    generatedTestCases = [...testCases];
-
-                    let html = "";
-
-                    html += `
-        <div class="mb-3">
-
-            <input
-                type="checkbox"
-                id="selectAll"
-                checked
-                onchange="toggleAll(this)">
-
-            <label for="selectAll">
-                <b>Select All</b>
-            </label>
-
-        </div>
-    `;
-
-                    testCases.forEach((tc, index) => {
-
-                        html += `
-
-        <div class="accordion-item testcase-item"
-     data-title="${tc.title.toLowerCase()}"
-     data-description="${tc.description.toLowerCase()}"
-     data-priority="${tc.priority}">
-
-            <h2 class="accordion-header">
-
-                <button class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#tc${index}">
-
-                    <input
-                        class="form-check-input me-3 testcaseCheckbox"
-                        type="checkbox"
-                        checked
-                        value="${index}"
-                        onclick="event.stopPropagation()">
-
-                    <span class="fw-semibold">
-
-    ${tc.title}
-
-</span>
-
-                </button>
-
-            </h2>
-
-            <div id="tc${index}"
-     class="accordion-collapse collapse"
-     data-bs-parent="">
-
-                <div class="accordion-body">
-
-                    <p><b>Description</b><br>${tc.description}</p>
-
-                    <p>
-
-<b>Priority :</b>
-
-<span class="badge ${priorityBadge(tc.priority)}">
-
-${tc.priority}
-
-</span>
-
-</p>
-
-                    <p><b>Type</b> : ${tc.type}</p>
-
-                    <p><b>Precondition</b><br>${tc.precondition}</p>
-
-                    <b>Steps</b>
-
-                    <ol>
-
-                        ${tc.steps.map(s => `<li>${s}</li>`).join("")}
-
-                    </ol>
-
-                    <p>
-
-                    <b>Expected Result</b><br>
-
-                    ${tc.expectedResult}
-
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        `;
-                    });
-
-                    document.getElementById("resultContainer").innerHTML = html;
-
-                    document.getElementById("searchCount").innerHTML =
-    testCases.length + " Test Cases";
-
-                    document.getElementById("uploadBtn").style.display = "inline-block";
-                }
-
-                function toggleAll(selectAll) {
-
-                    document.querySelectorAll(".testcaseCheckbox")
-                        .forEach(cb => cb.checked = selectAll.checked);
-
-                }
-
-
-
-                async function uploadToJira() {
-                    const startTime = Date.now();
-                    document.getElementById("successAlert").style.display = "none";
-                    document.getElementById("errorAlert").style.display = "none";
-
-                    let selected = [];
-
-                    document.querySelectorAll(".testcaseCheckbox")
-                        .forEach(cb => {
-
-                            if (cb.checked) {
-
-                                selected.push(parseInt(cb.value));
-
-                            }
-
-                        });
-
-                    if (selected.length === 0) {
-
-                        showToast("Please select at least one test case.");
-
-                        return;
-
-                    }
-
-                    // Disable buttons during upload
-                    document.getElementById("uploadBtn").disabled = true;
-                    document.getElementById("generateBtn").disabled = true;
-
-                    // Show progress bar
-                    document.getElementById("uploadProgressContainer").style.display = "block";
-
-                    updateProgress(10);
-
-                    try {
-
-                        const response = await fetch("/api/v1/upload", {
-
-                            method: "POST",
-
-                            headers: {
-
-                                "Content-Type": "application/json"
-
-                            },
-
-                            body: JSON.stringify(selected)
-
-                        });
-
-                        updateProgress(60);
-
-                        const result = await response.json();
-
-                        updateProgress(100);
-
-                        if (!result.success) {
-
-                            throw new Error(result.message);
-
-                        }
-
-                        // Upload Summary
-                        document.getElementById("uploadedCount").innerHTML =
-                            result.uploadedCount;
-
-                        document.getElementById("failedCount").innerHTML =
-                            result.failedCount;
-
-                        // Jira Links
-                        const jiraLinks = result.jiraLinks || [];
-
-                        let html = "";
-
-                        if (jiraLinks.length > 0) {
-
-                            html += "<h5 class='mb-3'>Created Jira Test Cases</h5>";
-
-                            html += "<button class='btn btn-primary btn-sm mb-3' ";
-                            html += "onclick='openAllJiraLinks()'>";
-                            html += "Open All Test Cases";
-                            html += "</button>";
-
-                            html += "<ul class='list-group'>";
-
-                            jiraLinks.forEach(link => {
-
-                                const issueKey = link.substring(link.lastIndexOf("/") + 1);
-
-                                html += `
-            <li class="list-group-item">
-
-                <div class="d-flex justify-content-between align-items-center mb-2">
-
-    <div>
-
-        ✅
-
-        <a href="${link}" target="_blank">
-
-            ${issueKey}
-
-        </a>
-
-    </div>
-
-    <div>
-
-        
-    </div>
-
-</div>
-
-            </li>
-        `;
-
-                            });
-
-                            html += "</ul>";
-                        }
-
-                        document.getElementById("jiraLinksContainer").innerHTML = html;
-
-                        document.getElementById("successAlert").style.display = "block";
-
-                        const duration =
-                            ((Date.now() - startTime) / 1000).toFixed(2);
-
-                        document.getElementById("uploadDuration").innerHTML =
-                            duration + " sec";
-
-                        scrollToSuccess();
-
-                        showToast(result.message);
-
-                    }
-                    catch (e) {
-
-                        document.getElementById("errorAlert").style.display = "block";
-
-                        document.getElementById("errorAlert").innerHTML =
-                            e.message;
-
-                        showToast("Upload failed.");
-
-                    }
-                    finally {
-
-                        document.getElementById("uploadBtn").disabled = false;
-                        document.getElementById("generateBtn").disabled = false;
-
-                        setTimeout(() => {
-
-                            document.getElementById("uploadProgressContainer").style.display = "none";
-
-                            updateProgress(0);
-
-                        }, 800);
-
-                    }
-
-                }
-
-
-                function openAllJiraLinks() {
-
-                    document
-
-                        .querySelectorAll("#jiraLinksContainer a")
-
-                        .forEach(link => {
-
-                            window.open(
-
-                                link.href,
-
-                                "_blank"
-
-                            );
-
-                        });
-
-                }
-
-                function filterTestCases() {
-
-    const keyword =
-        document.getElementById("searchBox")
-            .value
-            .toLowerCase();
-
-    let visible = 0;
-
-    document.querySelectorAll(".testcase-item")
-        .forEach(item => {
-
-            const title =
-                item.dataset.title;
-
-            const description =
-                item.dataset.description;
-
-            if (title.includes(keyword) ||
-                description.includes(keyword)) {
-
-                item.style.display = "";
-
-                visible++;
-
-            }
-            else {
-
-                item.style.display = "none";
-
-            }
-
-        });
-
-    document.getElementById("searchCount").innerHTML =
-        visible + " Test Case(s)";
-
-}
-
-function expandAll() {
-
-    document
-        .querySelectorAll(".accordion-collapse")
-        .forEach(item => {
-
-            const collapse =
-                bootstrap.Collapse.getOrCreateInstance(item);
-
-            collapse.show();
-
-        });
-
-}
-
-function collapseAll() {
-
-    document
-        .querySelectorAll(".accordion-collapse")
-        .forEach(item => {
-
-            const collapse =
-                bootstrap.Collapse.getOrCreateInstance(item);
-
-            collapse.hide();
-
-        });
-
-}
-
-
-function priorityValue(priority){
-
-    switch(priority?.toUpperCase()){
-
-        case "HIGH":
-
-            return 1;
-
-        case "MEDIUM":
-
-            return 2;
-
-        case "LOW":
-
-            return 3;
-
-        default:
-
-            return 99;
-
-    }
-
-}
-
-function sortTestCases(){
-
-    const option =
-        document.getElementById("prioritySort").value;
-
-    if(option==="NONE"){
-
-        renderTestCases(generatedTestCases);
-
-        return;
-
-    }
-
-    let sorted =
-        [...generatedTestCases];
-
-    if(option==="HIGH"){
-
-        sorted.sort((a,b)=>
-
-            priorityValue(a.priority)
-            -
-            priorityValue(b.priority)
-
-        );
-
-    }
-
-    if(option==="LOW"){
-
-        sorted.sort((a,b)=>
-
-            priorityValue(b.priority)
-            -
-            priorityValue(a.priority)
-
-        );
-
-    }
-
-    renderTestCases(sorted);
-
-}
-
-
-function priorityBadge(priority){
-
-    switch(priority?.toUpperCase()){
-
-        case "HIGH":
-
-            return "bg-danger";
-
-        case "MEDIUM":
-
-            return "bg-warning text-dark";
-
-        case "LOW":
-
-            return "bg-success";
-
-        default:
-
-            return "bg-secondary";
-
-    }
-
-}
-
-function toggleDarkMode(){
-
-    document.body.classList.toggle("dark-mode");
-
-    const enabled =
-        document.body.classList.contains("dark-mode");
-
-    localStorage.setItem("darkMode", enabled);
-
-}
-
-    window.onload = function(){
-
-    const dark =
-        localStorage.getItem("darkMode");
-
-    if(dark==="true"){
-
-        document.body.classList.add("dark-mode");
-
-        document.getElementById("darkModeSwitch").checked=true;
-
-    }
-
-}
-
-            </script>
-
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-            <div class="toast-container position-fixed top-0 end-0 p-3">
-
-                <div id="statusToast" class="toast" role="alert">
-
-                    <div class="toast-header">
-
-                        <strong class="me-auto">
-
-                            GenAI Jira
-
-                        </strong>
-
-                        <button type="button" class="btn-close" data-bs-dismiss="toast">
-                        </button>
+                        </div>
 
                     </div>
 
-                    <div id="toastBody" class="toast-body">
-
-                    </div>
 
                 </div>
 
             </div>
 
-
         </div>
-
-    </div>
-
-    </div>
 
 </body>
 

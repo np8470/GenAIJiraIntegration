@@ -1,0 +1,714 @@
+/* ===============================
+   Global
+================================ */
+
+body {
+    background: #f8f9fa;
+    transition: background .3s ease, color .3s ease;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+}
+
+
+/* ===============================
+   Animation
+================================ */
+
+@keyframes fadeIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ===============================
+   Cards
+================================ */
+
+.card {
+
+    border-radius: 12px;
+    margin-bottom: 25px;
+    border: none;
+    transition: all .25s ease;
+
+}
+
+.card:hover {
+
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+
+}
+
+.card-header {
+
+    font-weight: 600;
+
+}
+
+
+/* ===============================
+   Copy Button
+================================ */
+
+.copy-btn {
+
+    margin-left: 10px;
+
+}
+
+
+/* ===============================
+   Jira Items
+================================ */
+
+.jira-item {
+
+    margin-bottom: 10px;
+
+}
+
+
+/* ===============================
+   Accordion
+================================ */
+
+.accordion-button {
+
+    transition: all .25s ease;
+
+}
+
+.accordion-collapse {
+
+    transition: all .25s ease;
+
+}
+
+.accordion-item {
+
+    margin-bottom: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+
+}
+
+.accordion-body {
+
+    animation: fadeIn .35s ease;
+
+}
+
+
+/* ===============================
+   Test Case Card
+================================ */
+
+.testcase-item {
+
+    transition: transform .2s ease;
+
+}
+
+.testcase-item:hover {
+
+    transform: translateY(-2px);
+
+}
+
+
+/* ===============================
+   Progress Bar
+================================ */
+
+.progress {
+
+    height: 28px;
+
+}
+
+.progress-bar {
+
+    font-weight: bold;
+
+}
+
+
+/* ===============================
+   Upload Summary
+================================ */
+
+#uploadSummary {
+
+    animation: fadeIn .5s ease;
+
+}
+
+
+/* ===============================
+   Success Card
+================================ */
+
+#successAlert {
+
+    animation: fadeIn .6s;
+
+}
+
+
+/* ===============================
+   Error Alert
+================================ */
+
+#errorAlert {
+
+    animation: fadeIn .5s ease;
+
+}
+
+
+/* ===============================
+   Search
+================================ */
+
+#searchBox {
+
+    border-radius: 8px;
+
+}
+
+#searchCount {
+
+    font-size: .9rem;
+
+}
+
+
+/* ===============================
+   Buttons
+================================ */
+
+.btn {
+
+    transition: all .2s ease;
+
+}
+
+.btn:hover {
+
+    transform: translateY(-1px);
+
+}
+
+.btn-lg {
+
+    min-width: 220px;
+
+}
+
+
+/* ===============================
+   Spinner
+================================ */
+
+.spinner-border {
+
+    width: 3rem;
+    height: 3rem;
+
+}
+
+
+/* ===============================
+   Upload Progress
+================================ */
+
+#uploadProgressCard {
+
+    border: none;
+    box-shadow: 0 .25rem .75rem rgba(0,0,0,.08);
+
+}
+
+#uploadProgressText {
+
+    font-size: .95rem;
+
+}
+
+
+/* ===============================
+   List Group
+================================ */
+
+.list-group-item {
+
+    transition: background .25s ease;
+
+}
+
+.list-group-item:hover {
+
+    background: #f5f5f5;
+
+}
+
+
+/* ===============================
+   Badge
+================================ */
+
+.badge {
+
+    font-size: .82rem;
+
+}
+
+
+/* ===============================
+   Responsive
+================================ */
+
+@media (max-width:992px){
+
+    .btn-lg{
+
+        width:100%;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .card-header{
+
+        text-align:center;
+
+    }
+
+    #searchCount{
+
+        margin-top:10px;
+
+    }
+
+    .btn{
+
+        margin-top:8px;
+
+    }
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+body.dark-mode{
+
+    background:#121212 !important;
+    color:#f5f5f5;
+
+}
+
+body.dark-mode .card{
+
+    background:#1e1e1e;
+    color:#ffffff;
+    border:1px solid #444;
+
+}
+
+body.dark-mode .card-header{
+
+    background:#212529 !important;
+    color:white;
+
+}
+
+body.dark-mode .accordion-item{
+
+    background:#242424;
+    color:white;
+
+}
+
+body.dark-mode .accordion-button{
+
+    background:#2d2d2d;
+    color:white;
+
+}
+
+body.dark-mode .accordion-button:not(.collapsed){
+
+    background:#343a40;
+    color:white;
+
+}
+
+body.dark-mode .accordion-body{
+
+    background:#1e1e1e;
+    color:white;
+
+}
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+
+    background: #2c2c2c;
+    color: #ffffff;
+    border-color: #555;
+
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+
+    background: #2c2c2c;
+    color: #ffffff;
+    border-color: #6ea8fe;
+
+    box-shadow: 0 0 0 .2rem rgba(13,110,253,.25);
+
+}
+
+body.dark-mode .form-control::placeholder {
+
+    color: #cccccc;
+
+}
+
+body.dark-mode label {
+
+    color: #ffffff;
+
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode div {
+
+    color: inherit;
+
+}
+
+
+/* =====================================================
+   List Group
+===================================================== */
+
+body.dark-mode .list-group-item {
+
+    background: #2a2a2a;
+    color: #ffffff;
+    border-color: #555;
+
+}
+
+body.dark-mode .list-group-item:hover {
+
+    background: #353535;
+
+}
+
+
+/* =====================================================
+   Alerts
+===================================================== */
+
+body.dark-mode .alert-success {
+
+    background: #184d2b;
+    color: #ffffff;
+    border-color: #1f6d3d;
+
+}
+
+body.dark-mode .alert-danger {
+
+    background: #5c1c24;
+    color: #ffffff;
+    border-color: #842029;
+
+}
+
+
+/* =====================================================
+   Toast
+===================================================== */
+
+body.dark-mode .toast {
+
+    background: #2a2a2a;
+    color: #ffffff;
+
+}
+
+body.dark-mode .toast-header {
+
+    background: #343a40;
+    color: #ffffff;
+    border-bottom: 1px solid #555;
+
+}
+
+body.dark-mode .btn-close {
+
+    filter: invert(1);
+
+}
+
+
+/* =====================================================
+   Links
+===================================================== */
+
+body.dark-mode a {
+
+    color: #6cb6ff;
+
+}
+
+body.dark-mode a:hover {
+
+    color: #9fd0ff;
+
+}
+
+
+/* =====================================================
+   Outline Buttons
+===================================================== */
+
+body.dark-mode .btn-outline-primary {
+
+    color: #9ecbff;
+    border-color: #9ecbff;
+
+}
+
+body.dark-mode .btn-outline-primary:hover {
+
+    background: #0d6efd;
+    color: #ffffff;
+
+}
+
+body.dark-mode .btn-outline-secondary {
+
+    color: #dddddd;
+    border-color: #999999;
+
+}
+
+body.dark-mode .btn-outline-secondary:hover {
+
+    background: #6c757d;
+    color: #ffffff;
+
+}
+
+body.dark-mode .btn-outline-success {
+
+    color: #8be28b;
+    border-color: #8be28b;
+
+}
+
+body.dark-mode .btn-outline-success:hover {
+
+    background: #198754;
+    color: #ffffff;
+
+}
+
+body.dark-mode .btn-outline-danger {
+
+    color: #ff9898;
+    border-color: #ff9898;
+
+}
+
+body.dark-mode .btn-outline-danger:hover {
+
+    background: #dc3545;
+    color: #ffffff;
+
+}
+
+
+/* =====================================================
+   Progress Bar
+===================================================== */
+
+body.dark-mode .progress {
+
+    background: #444444;
+
+}
+
+body.dark-mode .progress-bar {
+
+    color: #ffffff;
+
+}
+
+
+/* =====================================================
+   Upload Summary Card
+===================================================== */
+
+body.dark-mode #uploadSummary {
+
+    border-color: #198754;
+
+}
+
+body.dark-mode #successAlert {
+
+    border-color: #198754;
+
+}
+
+
+/* =====================================================
+   Input Groups
+===================================================== */
+
+body.dark-mode input[type="checkbox"] {
+
+    accent-color: #0d6efd;
+
+}
+
+body.dark-mode input[type="text"] {
+
+    color: #ffffff;
+
+}
+
+
+/* =====================================================
+   Accordion Scroll
+===================================================== */
+
+.accordion-body {
+
+    max-height: 700px;
+    overflow-y: auto;
+
+}
+
+
+/* =====================================================
+   Utility Classes
+===================================================== */
+
+.cursor-pointer {
+
+    cursor: pointer;
+
+}
+
+.text-small {
+
+    font-size: .85rem;
+
+}
+
+.shadow-hover {
+
+    transition: .25s;
+
+}
+
+.shadow-hover:hover {
+
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+
+}
+
+.rounded-12 {
+
+    border-radius: 12px;
+
+}
+
+
+/* =====================================================
+   Bootstrap Overrides
+===================================================== */
+
+.form-control:focus,
+.form-select:focus {
+
+    box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+
+}
+
+.btn:focus {
+
+    box-shadow: none;
+
+}
+
+.accordion-button:focus {
+
+    box-shadow: none;
+
+}
+
+
+/* =====================================================
+   Smooth Theme Transition
+===================================================== */
+
+body,
+.card,
+.card-header,
+.form-control,
+.form-select,
+.accordion-item,
+.accordion-button,
+.accordion-body,
+.toast,
+.list-group-item,
+.alert {
+
+    transition:
+        background .25s ease,
+        color .25s ease,
+        border-color .25s ease;
+
+}
+
+
+/* =====================================================
+   Footer Space
+===================================================== */
+
+body {
+
+    padding-bottom: 40px;
+
+}
