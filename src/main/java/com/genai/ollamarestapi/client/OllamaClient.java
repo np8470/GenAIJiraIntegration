@@ -1,5 +1,6 @@
 package com.genai.ollamarestapi.client;
 
+import com.genai.ollamarestapi.ai.JsonSchemaFactory;
 import com.genai.ollamarestapi.model.ai.OllamaRequest;
 import com.genai.ollamarestapi.model.ai.OllamaResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,30 +22,67 @@ public class OllamaClient {
     @Value("${ollama.model:mistral:latest}")
     private String model;
 
-    public String generate(String prompt) {
+    /**
+     * Calls Ollama and returns the complete response.
+     */
+    public OllamaResponse generate(String prompt) {
 
-        OllamaRequest request = new OllamaRequest(
-                model,
-                prompt,
-                false,
-                "json");
+        OllamaRequest request = OllamaRequest.builder()
+                .model(model)
+                .prompt(prompt)
+                .stream(false)
+                .format(JsonSchemaFactory.testCaseSchema())
+                .temperature(0.1)
+                .build();
 
-        log.info("Calling Ollama using model {}", model);
+        log.info("==============================================");
+        log.info("Calling Ollama");
+        log.info("URL      : {}", ollamaUrl);
+        log.info("Model    : {}", model);
+        log.info("==============================================");
 
-        OllamaResponse response = webClientBuilder.build()
-                .post()
-                .uri(ollamaUrl + "/api/generate")
-                .bodyValue(request)
-                .retrieve()
-                .bodyToMono(OllamaResponse.class)
-                .block();
+        try {
 
-        if (response == null || response.getResponse() == null) {
-            throw new RuntimeException("Empty response received from Ollama.");
+            OllamaResponse response = webClientBuilder
+                    .build()
+                    .post()
+                    .uri(ollamaUrl + "/api/generate")
+                    .bodyValue(request)
+                    .retrieve()
+                    .bodyToMono(OllamaResponse.class)
+                    .block();
+
+            if (response == null) {
+                throw new RuntimeException("Received null response from Ollama.");
+            }
+
+            log.info("==============================================");
+            log.info("Ollama Response");
+            log.info("Model            : {}", response.getModel());
+            log.info("Done             : {}", response.isDone());
+            log.info("Done Reason      : {}", response.getDoneReason());
+            log.info("Prompt Tokens    : {}", response.getPromptEvalCount());
+            log.info("Generated Tokens : {}", response.getEvalCount());
+            log.info("==============================================");
+
+            if (response.getResponse() == null ||
+                    response.getResponse().isBlank()) {
+
+                throw new RuntimeException(
+                        "Ollama returned an empty response.");
+            }
+
+            log.info("Raw AI Response:\n{}", response.getResponse());
+
+            return response;
+
+        } catch (Exception ex) {
+
+            log.error("Error while calling Ollama.", ex);
+
+            throw new RuntimeException(
+                    "Failed to call Ollama API.",
+                    ex);
         }
-
-        log.info("Raw AI Response:\n{}", response.getResponse());
-
-        return response.getResponse();
     }
 }
