@@ -9,8 +9,6 @@ Thank you for your interest in contributing to TestPilot AI!
 Create your own fork of the repository.
 
 ### 2. Clone Your Fork
-
-```bash
 git clone https://github.com/YOUR_USERNAME/TestPilot-AI.git
 
 ### 3. Clone Your Fork
