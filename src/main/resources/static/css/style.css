@@ -768,92 +768,286 @@ body {
 
 }
 
-/* ===========================
-   DARK MODE
-=========================== */
-
-body.dark-mode .workflow-icon{
-
-    background:#2c2c2c;
-
-    box-shadow:none;
-
-}
-
-body.dark-mode .workflow-step:hover{
-
-    background:#2f2f2f;
-
-}
-
-body.dark-mode .workflow-arrow{
-
-    color:#ccc;
-
-}
 
 
-/* =======================================
-   WORKFLOW
-======================================= */
+
+/* ==========================================================
+   AI WORKFLOW CARD
+========================================================== */
+
+/* ===========================================
+   WORKFLOW CARD
+=========================================== */
 
 .workflow-card{
 
-    margin-top:60px;
-
-    background:#1f232a;
-
     border-radius:18px;
-
     overflow:hidden;
+    border:none;
 
-    box-shadow:0 15px 40px rgba(0,0,0,.35);
-
+    transition:.3s;
 }
 
-.workflow-header{
+body.dark-mode .workflow-card{
+
+    background:#232a34;
+    color:white;
+}
+
+body:not(.dark-mode) .workflow-card{
+
+    background:#ffffff;
+    color:#222;
+}
+
+.workflow-card .card-header{
 
     text-align:center;
-
-    color:white;
-
-    font-size:30px;
-
-    font-weight:700;
-
-    padding:25px;
-
-    background:#242b33;
-
+    font-weight:bold;
+    font-size:28px;
+    padding:22px;
 }
 
-.workflow-pipeline{
+body.dark-mode .workflow-card .card-header{
+
+    background:#2b323c;
+    color:white;
+}
+
+body:not(.dark-mode) .workflow-card .card-header{
+
+    background:#0d6efd;
+    color:white;
+}
+
+/* ROW */
+
+.workflow-row{
 
     display:flex;
 
-    justify-content:space-between;
-
     align-items:center;
 
-    padding:45px;
+    justify-content:space-between;
 
+    gap:18px;
+
+    flex-wrap:nowrap;
 }
 
-.pipeline-step{
+/* STEP */
+
+.workflow-step{
 
     flex:1;
 
     text-align:center;
+}
+
+/* ICON */
+
+.workflow-circle{
+
+    width:78px;
+
+    height:78px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin:auto;
+
+    font-size:34px;
+
+    color:white;
+
+    box-shadow:0 0 18px rgba(0,0,0,.25);
+}
+
+.blue{
+
+    background:#0d6efd;
+}
+
+.green{
+
+    background:#198754;
+}
+
+.yellow{
+
+    background:#ffc107;
+
+    color:#333;
+}
+
+.red{
+
+    background:#dc3545;
+}
+
+.workflow-step h5{
+
+    margin-top:16px;
+
+    font-weight:700;
+}
+
+.workflow-step p{
+
+    font-size:14px;
+
+    opacity:.85;
+}
+
+/* CONNECTOR */
+
+.workflow-line{
+
+    height:4px;
+
+    flex:0 0 70px;
+
+    border-radius:10px;
+}
+
+.workflow-line.blue{
+
+    background:#0d6efd;
+}
+
+.workflow-line.green{
+
+    background:#198754;
+}
+
+.workflow-line.yellow{
+
+    background:#ffc107;
+}
+
+/* MOBILE */
+
+@media(max-width:992px){
+
+.workflow-row{
+
+    flex-direction:column;
+}
+
+.workflow-line{
+
+    width:4px;
+
+    height:60px;
+
+    flex:none;
+}
 
 }
 
-.pipeline-icon{
 
-    width:90px;
 
-    height:90px;
+
+
+
+/* ===========================
+   Website Branding
+=========================== */
+
+.brand-header{
+
+    margin-bottom:30px;
+
+}
+
+.brand-title{
+
+    font-size:56px;
+
+    font-weight:900;
+
+    background:linear-gradient(
+        90deg,
+        #4facfe,
+        #00f2fe,
+        #7b61ff
+    );
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+
+    background-clip:text;
+
+    letter-spacing:1px;
+
+}
+
+.brand-icon{
+
+    color:#ffb100;
+
+    margin-right:12px;
+
+}
+
+.brand-subtitle{
+
+    font-size:20px;
+
+    color:#adb5bd;
+
+    letter-spacing:.8px;
+
+    margin:0;
+
+    font-weight:500;
+
+}
+
+/* ===================================================
+   WEBSITE BRANDING
+=================================================== */
+
+.brand-header{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+}
+
+/* ---------- Logo ---------- */
+
+.brand-logo{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-bottom:15px;
+
+}
+
+.logo-circle{
+
+    width:75px;
+
+    height:75px;
 
     border-radius:50%;
+
+    background:linear-gradient(
+        135deg,
+        #0d6efd,
+        #6f42c1
+    );
 
     display:flex;
 
@@ -861,110 +1055,361 @@ body.dark-mode .workflow-arrow{
 
     align-items:center;
 
-    font-size:42px;
+    font-size:38px;
 
     color:white;
 
-    margin:auto;
+    box-shadow:
+        0 0 20px rgba(13,110,253,.45),
+        0 0 40px rgba(111,66,193,.35);
 
-    transition:.35s;
-
-}
-
-.pipeline-step:hover .pipeline-icon{
-
-    transform:translateY(-8px) scale(1.08);
+    animation:logoGlow 3s infinite alternate;
 
 }
 
-.fetch{
+/* ---------- Brand Name ---------- */
 
-    background:#0d6efd;
+.brand-title{
 
-    box-shadow:0 0 25px rgba(13,110,253,.55);
+    font-size:52px;
 
-}
+    font-weight:800;
 
-.ai{
+    letter-spacing:1px;
 
-    background:#198754;
+    margin-bottom:8px;
 
-    box-shadow:0 0 25px rgba(25,135,84,.55);
+    font-family:
+        "Segoe UI",
+        sans-serif;
 
-}
+    background:linear-gradient(
+        90deg,
+        #4facfe,
+        #00f2fe,
+        #7b61ff
+    );
 
-.review{
+    -webkit-background-clip:text;
 
-    background:#ffc107;
-
-    color:#222;
-
-    box-shadow:0 0 25px rgba(255,193,7,.55);
-
-}
-
-.upload{
-
-    background:#dc3545;
-
-    box-shadow:0 0 25px rgba(220,53,69,.55);
+    -webkit-text-fill-color:transparent;
 
 }
 
-.pipeline-step h5{
+/* ---------- Subtitle ---------- */
 
-    color:white;
+.brand-subtitle{
 
-    margin-top:18px;
+    font-size:20px;
 
-    font-weight:700;
+    color:#c9d1d9;
+
+    font-weight:500;
+
+    letter-spacing:.8px;
 
 }
 
-.pipeline-step p{
+/* ---------- Version ---------- */
 
-    color:#adb5bd;
+.brand-version{
+
+    margin-top:6px;
 
     font-size:15px;
 
-}
+    font-style:italic;
 
-.pipeline-line{
+    color:#9aa4af;
 
-    height:5px;
-
-    width:90px;
-
-    background:linear-gradient(90deg,#0d6efd,#198754,#ffc107,#dc3545);
-
-    border-radius:20px;
-
-    margin:0 18px;
+    letter-spacing:1px;
 
 }
 
-/* Dark Mode */
+/* ---------- Logo Animation ---------- */
 
-body.dark-mode .workflow-card{
+@keyframes logoGlow{
 
-    background:#212529;
+    from{
+
+        transform:scale(1);
+
+        box-shadow:
+            0 0 15px rgba(13,110,253,.45),
+            0 0 30px rgba(111,66,193,.35);
+
+    }
+
+    to{
+
+        transform:scale(1.06);
+
+        box-shadow:
+            0 0 25px rgba(13,110,253,.75),
+            0 0 55px rgba(111,66,193,.55);
+
+    }
 
 }
 
-body.dark-mode .workflow-step small{
+body.dark-mode .brand-subtitle{
 
-    color:#ccc;
-
-}
-
-body.dark-mode .workflow-arrow{
-
-    background:#5dade2;
+    color:#bfc9d4;
 
 }
 
-body.dark-mode .workflow-arrow::after{
+body.dark-mode .brand-version{
 
-    border-left-color:#5dade2;
+    color:#8d98a5;
+
+}
+
+/* ===================================================
+   BRANDING
+===================================================*/
+
+.brand-header{
+
+    margin-bottom:40px;
+
+}
+
+.brand-container{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:30px;
+
+}
+
+/* ==========================================
+   LOGO
+==========================================*/
+
+.brand-logo{
+
+    position:relative;
+
+    width:150px;
+
+    height:140px;
+
+}
+
+.shield{
+
+    position:absolute;
+
+    left:35px;
+
+    top:0;
+
+    width:80px;
+
+    height:95px;
+
+    background:linear-gradient(180deg,#2d8cff,#2455ff);
+
+    clip-path:polygon(50% 0%,100% 18%,100% 65%,50% 100%,0 65%,0 18%);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    box-shadow:
+
+        0 0 18px rgba(40,120,255,.7),
+
+        0 0 40px rgba(40,120,255,.4);
+
+}
+
+.checkmark{
+
+    color:white;
+
+    font-size:44px;
+
+    font-weight:bold;
+
+    margin-top:-12px;
+
+}
+
+.ai-badge{
+
+    position:absolute;
+
+    bottom:-12px;
+
+    background:#3f51ff;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    padding:6px 15px;
+
+    border-radius:10px;
+
+    box-shadow:0 0 10px rgba(80,80,255,.7);
+
+}
+
+/* ======================================
+   CIRCUITS
+======================================*/
+
+.circuit{
+
+    position:absolute;
+
+    width:26px;
+
+    height:3px;
+
+    background:#2d8cff;
+
+}
+
+.circuit::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:9px;
+
+    height:9px;
+
+    background:#2d8cff;
+
+    border-radius:50%;
+
+    top:-3px;
+
+}
+
+.left{
+
+    left:0;
+
+}
+
+.left::after{
+
+    left:-6px;
+
+}
+
+.right{
+
+    right:0;
+
+}
+
+.right::after{
+
+    right:-6px;
+
+}
+
+.top{
+
+    top:25px;
+
+}
+
+.middle{
+
+    top:58px;
+
+}
+
+.bottom{
+
+    top:92px;
+
+}
+
+/* ======================================
+   BRAND TITLE
+======================================*/
+
+.brand-title{
+
+    margin:0;
+
+    font-size:58px;
+
+    font-weight:800;
+
+    line-height:1;
+
+    color:white;
+
+    font-family:"Segoe UI",sans-serif;
+
+}
+
+.brand-title span{
+
+    background:linear-gradient(90deg,#00d4ff,#1f75ff);
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+
+}
+
+.brand-subtitle{
+
+    margin-top:10px;
+
+    font-size:26px;
+
+    color:#c7d2df;
+
+    font-weight:500;
+
+}
+
+.brand-version{
+
+    margin-top:8px;
+
+    font-size:16px;
+
+    color:#8b96a5;
+
+    font-style:italic;
+
+    letter-spacing:1px;
+
+}
+
+body:not(.dark-mode) .brand-title{
+
+    color:#1d2433;
+
+}
+
+body:not(.dark-mode) .brand-subtitle{
+
+    color:#5b6473;
+
+}
+
+body:not(.dark-mode) .brand-version{
+
+    color:#7a8699;
 
 }
