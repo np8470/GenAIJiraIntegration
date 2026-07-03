@@ -86,12 +86,6 @@
                 </div>
 
 
-
-
-
-
-
-
                 <div class="container mt-5 mb-5">
 
                     <div class="card shadow">
@@ -165,9 +159,6 @@
                         </div>
 
                     </div>
-
-
-
 
 
                     <div id="loadingDiv" class="text-center mt-4" style="display:none;">
@@ -315,58 +306,42 @@
 
                     <div class="card-header">
 
-                        <div class="row mt-4">
+                        <!-- Search + Sort + Count -->
+                        <div class="row align-items-center g-3">
 
-                            <div class="col-md-8">
+                            <!-- Search -->
+                            <div class="col-lg-6 col-md-12">
 
                                 <input type="text" id="searchBox" class="form-control"
-                                    placeholder="Search test cases...">
-
-                                <div class="row mt-3 mb-3">
-
-                                    <div class="col-md-5">
-
-
-
-                                    </div>
-
-                                    <div class="col-md-3">
-
-                                        <select id="prioritySort" class="form-select">
-
-                                            <option value="NONE">
-                                                Sort by Priority
-                                            </option>
-
-                                            <option value="HIGH">
-                                                High → Medium → Low
-                                            </option>
-
-                                            <option value="LOW">
-                                                Low → Medium → High
-                                            </option>
-
-                                        </select>
-
-                                    </div>
-
-                                    <div class="col-md-4 text-end">
-
-                                        <span id="searchCount" class="badge bg-primary">
-
-                                            0 Test Cases
-
-                                        </span>
-
-                                    </div>
-
-                                </div>
+                                    placeholder="🔍 Search test cases...">
 
                             </div>
 
-                            <div class="col-md-4 text-end">
+                            <!-- Sort -->
+                            <div class="col-lg-3 col-md-6">
 
-                                <span id="searchCount" class="badge bg-primary">
+                                <select id="prioritySort" class="form-select">
+
+                                    <option value="NONE">
+                                        Sort by Priority
+                                    </option>
+
+                                    <option value="HIGH">
+                                        High → Medium → Low
+                                    </option>
+
+                                    <option value="LOW">
+                                        Low → Medium → High
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <!-- Count -->
+                            <div class="col-lg-3 col-md-6 text-end">
+
+                                <span id="searchCount" class="badge bg-primary fs-6 px-3 py-2">
 
                                     0 Test Cases
 
@@ -376,9 +351,10 @@
 
                         </div>
 
-                        <div class="row mt-3 mb-3">
+                        <!-- Buttons -->
+                        <div class="row mt-4">
 
-                            <div class="col-md-6">
+                            <div class="col-md-12">
 
                                 <button class="btn btn-outline-primary btn-sm" id="expandAllBtn">
 
@@ -396,7 +372,9 @@
 
                         </div>
 
-                        <h4 class="mb-0">
+                        <hr>
+
+                        <h4 class="mb-0 fw-bold">
 
                             Generated Test Cases
 
@@ -427,8 +405,6 @@
 
 
                 <!-- ================= Workflow Card ================= -->
-
-                <!-- ================= AI Workflow ================= -->
 
                 <div class="container mt-5 mb-5">
 
@@ -558,6 +534,30 @@
 
     </div>
 
+
+    <!-- ================= Footer ================= -->
+
+    <footer class="app-footer">
+
+        <div class="container text-center">
+
+            <span>
+
+                © 2026 <strong>TestPilot AI</strong>
+
+                <span class="footer-divider">|</span>
+
+                Enterprise Edition v1.0
+
+                <span class="footer-divider">|</span>
+
+                All Rights Reserved.
+
+            </span>
+
+        </div>
+
+    </footer>
 
 </body>
 
