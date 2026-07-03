@@ -13,7 +13,7 @@ Thank you for your interest in contributing to TestPilot AI!
 
 - Open your terminal and run:
   ```bash
-  git clone https://github.com/YOUR_USERNAME/TestPilot-AI.git
+  git clone https://github.com/YOUR_USERNAME/GenAIJiraIntegration.git
   ```
 
 ### 3. Create a Feature Branch
@@ -35,7 +35,7 @@ Please follow the coding standards:
 
 - Run the tests:
   ```bash
-  mvn clean test
+  ./gradlew clean build bootRun
   ```
 - Ensure all tests pass
 
