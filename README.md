@@ -72,20 +72,9 @@ Designed for QA Engineers, SDETs, Test Architects, and Agile Teams.
 
 ---
 
-## 📊 Dashboard (Enterprise)
-
-- Upload History
-- Generation History
-- Recent User Stories
-- AI Usage Statistics
-- Export Reports
-- Team Management
-
----
-
 # 🏗 Architecture
 
-```
+
                  +------------------+
                  |     Browser      |
                  +---------+--------+
@@ -228,11 +217,6 @@ src
 Currently Tested
 
 - Mistral
-- Llama 3
-- DeepSeek
-- Phi
-- Gemma
-
 Configured through Ollama.
 
 ---
@@ -259,7 +243,7 @@ jira.api.token=your-api-token
 ## Clone
 
 ```bash
-git clone https://github.com/yourusername/TestPilot-AI.git
+git clone https://github.com/yourusername/GenAIJiraIntegration.git
 ```
 
 ---
@@ -275,7 +259,7 @@ ollama run mistral
 ## Run Spring Boot
 
 ```bash
-mvn spring-boot:run
+./gradlew clean build bootRun
 ```
 
 ---
