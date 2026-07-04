@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'com.genai'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
+description = 'TestPilot AI'
 
 java {
 	toolchain {
@@ -24,39 +25,106 @@ ext {
 }
 
 dependencies {
+
+    // -----------------------------
+    // Spring Boot
+    // -----------------------------
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.ai:spring-ai-starter-model-ollama:1.0.0-M8'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-logging'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'com.atlassian.jira:jira-rest-java-client-api:5.2.7'
-    implementation 'com.atlassian.jira:jira-rest-java-client-core:5.2.7'
-    implementation 'io.atlassian.fugue:fugue:4.7.2'
-    implementation 'org.glassfish.jersey.core:jersey-common:3.1.7'
+    implementation("org.springframework.retry:spring-retry:2.0.13")
+    implementation("org.springframework:spring-aspects:7.0.8")
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    // -----------------------------
+    // Spring Security
+    // -----------------------------
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // -----------------------------
+    // Spring Data JPA
+    // -----------------------------
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // -----------------------------
+    // Database
+    // -----------------------------
+    runtimeOnly 'com.h2database:h2'
+
+     // PostgreSQL (Use later in Production)
+    // runtimeOnly 'org.postgresql:postgresql'
+
+    // -----------------------------
+    // WebClient
+    // -----------------------------
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // -----------------------------
+    // Jackson
+    // -----------------------------
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
-
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
-    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
-
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
-    compileOnly 'org.projectlombok:lombok:1.18.38'
-    annotationProcessor 'org.projectlombok:lombok:1.18.38'
-
-    testCompileOnly 'org.projectlombok:lombok:1.18.38'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
-
-    implementation("org.springframework.retry:spring-retry:2.0.13")
-    implementation("org.springframework:spring-aspects:7.0.8")
-
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // -----------------------------
+    // Lombok
+    // -----------------------------
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+
+    // -----------------------------
+    // Resilience4j
+    // -----------------------------
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+
+     // -----------------------------
+    // Apache Commons
+    // -----------------------------
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+
+    // -----------------------------
+    // Actuator
+    // -----------------------------
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // -----------------------------
+    // Testing
+    // -----------------------------
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // -----------------------------
+    // Ollama
+    // -----------------------------
+    implementation 'org.springframework.ai:spring-ai-starter-model-ollama:1.0.0-M8'
+    //implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+
+    // -----------------------------
+    // Atlassian -Jira
+    // -----------------------------
+    implementation 'com.atlassian.jira:jira-rest-java-client-api:5.2.7'
+    implementation 'com.atlassian.jira:jira-rest-java-client-core:5.2.7'
+    implementation 'io.atlassian.fugue:fugue:4.7.2'
+
+    // -----------------------------
+    // Glassfish-jersey
+    // -----------------------------
+    implementation 'org.glassfish.jersey.core:jersey-common:3.1.7'
+
+
     
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    
 }
 
 configurations.all {

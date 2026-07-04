@@ -1,5 +1,7 @@
 package com.genai.ollamarestapi.service;
 
+import com.genai.ollamarestapi.audit.Audit;
+import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.client.OllamaClient;
 import com.genai.ollamarestapi.exception.AIException;
 import com.genai.ollamarestapi.model.GenerationType;
@@ -25,6 +27,7 @@ public class AiService {
     /**
      * Generate Manual/API/Selenium Test Cases using Ollama.
      */
+    @Audit(action = AuditAction.GENERATE_TEST_CASE, message = "Generated Test Cases from User Story description for generation type {1}")
     public List<TestCase> generateTestCases(
             String userStoryDescription,
             GenerationType type) {
@@ -76,6 +79,7 @@ public class AiService {
     /**
      * Converts test cases to readable text.
      */
+    @Audit(action = AuditAction.FORMAT_TEST_CASE, message = "Converts test cases to readable text ")
     public String buildOutput(List<TestCase> testCases) {
 
         StringBuilder sb = new StringBuilder();

@@ -2,6 +2,8 @@ package com.genai.ollamarestapi.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.genai.ollamarestapi.audit.Audit;
+import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.model.ai.TestCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ public class ResponseParser {
     /**
      * Parse Ollama response into TestCase list.
      */
+    @Audit(action = AuditAction.PARSE_OLLAMA_RES_TO_TESTCASE ,message = "Parse Ollama response {0} into TestCase list")
     public List<TestCase> parse(String response) {
 
         try {
@@ -67,6 +70,7 @@ public class ResponseParser {
     /**
      * Parse one JSON object into TestCase.
      */
+    @Audit(action = AuditAction.PARSE_JSON_OBJ_TO_TESTCASE, message = "Parse one JSON object {0} into TestCase." )
     private TestCase parseTestCase(JsonNode node) {
 
         TestCase tc = new TestCase();

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>403 - Access Denied | TestPilot AI</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container">
+
+    <div class="row justify-content-center align-items-center vh-100">
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-lg border-0 text-center">
+
+                <div class="card-header bg-danger text-white">
+
+                    <h1 class="display-4 mb-2">
+
+                        🚫 403
+
+                    </h1>
+
+                    <h3>
+
+                        Access Denied
+
+                    </h3>
+
+                </div>
+
+                <div class="card-body p-5">
+
+                    <div class="display-1 mb-4">
+
+                        <i class="bi bi-shield-lock-fill text-danger"></i>
+
+                    </div>
+
+                    <h3 class="mb-3">
+
+                        Sorry!
+
+                    </h3>
+
+                    <p class="lead"
+                       th:text="${message}">
+
+                    </p>
+
+                    <p>
+
+                        Logged in as
+
+                        <strong th:text="${username}">
+
+                        </strong>
+
+                    </p>
+
+                    <hr>
+
+                    <div class="d-grid gap-3">
+
+                        <a th:href="@{/}"
+
+                           class="btn btn-primary btn-lg">
+
+                            <i class="bi bi-house-fill"></i>
+
+                            Return to Dashboard
+
+                        </a>
+
+                        <form th:action="@{/logout}"
+                              method="post">
+
+                            <button class="btn btn-outline-danger btn-lg w-100">
+
+                                <i class="bi bi-box-arrow-right"></i>
+
+                                Logout
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="card-footer">
+
+                    <small class="text-muted">
+
+                        © 2026 TestPilot AI |
+                        Enterprise Edition v1.0
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

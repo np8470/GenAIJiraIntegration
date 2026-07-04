@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.genai.ollamarestapi.audit.Audit;
+import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.model.ai.TestCase;
 
 @Service
@@ -25,6 +27,7 @@ public class JiraService {
     return jiraUrl + "/browse/" + issueKey;
   }
 
+  @Audit(action = AuditAction.CREATE_TEST_CASE, message = "Created testcases {1} for project {0}")
   public String createTestCase(String projectKey, TestCase tc) {
     String jiraDescription = buildJiraDescription(tc);
     String body = """
@@ -83,6 +86,7 @@ public class JiraService {
         .replace("\r", "");
   }
 
+  @Audit(action = AuditAction.LINK_ISSUE, message = "Test case {1} linked to Work Item id {0}")
   public void linkIssue(String storyKey, String testCaseKey) {
 
     String body = """

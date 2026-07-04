@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import com.genai.ollamarestapi.audit.Audit;
+import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.exception.JiraException;
 import com.genai.ollamarestapi.model.GenerateResponse;
 import com.genai.ollamarestapi.model.GenerationType;
@@ -27,6 +29,7 @@ public class TestCaseOrchestratorService {
         private final JiraService jiraService;
         private final JiraApiProperties jiraApiProperties;
 
+        @Audit(action = AuditAction.GENERATE_RESPONSE, message = "Generate response from Work Item id {0} for Generation type {1}")
         public GenerateResponse generateOnly(
                         String storyKey,
                         GenerationType type,
@@ -61,83 +64,78 @@ public class TestCaseOrchestratorService {
                 }
         }
 
+        @Audit(action = AuditAction.UPLOAD_SELECTED_TO_JIRA, message = "Upload selected testcases {0} to Jira")
         @SuppressWarnings("unchecked")
-public UploadResponse uploadSelectedToJira(
-        List<Integer> selectedIndexes,
-        HttpSession session) {
+        public UploadResponse uploadSelectedToJira(
+                        List<Integer> selectedIndexes,
+                        HttpSession session) {
 
-    String storyKey =
-            (String) session.getAttribute("storyKey");
+                String storyKey = (String) session.getAttribute("storyKey");
 
-    List<TestCase> testCases =
-            (List<TestCase>) session.getAttribute("generatedTestCases");
+                List<TestCase> testCases = (List<TestCase>) session.getAttribute("generatedTestCases");
 
-    if (storyKey == null || testCases == null) {
+                if (storyKey == null || testCases == null) {
 
-        return new UploadResponse(
-                false,
-                "Please generate test cases first.",
-                0,
-                0,
-                List.of());
-    }
+                        return new UploadResponse(
+                                        false,
+                                        "Please generate test cases first.",
+                                        0,
+                                        0,
+                                        List.of());
+                }
 
-    int uploadedCount = 0;
-    int failedCount = 0;
+                int uploadedCount = 0;
+                int failedCount = 0;
 
-    List<String> jiraLinks = new ArrayList<>();
+                List<String> jiraLinks = new ArrayList<>();
 
-    for (Integer index : selectedIndexes) {
+                for (Integer index : selectedIndexes) {
 
-        try {
+                        try {
 
-            TestCase tc = testCases.get(index);
+                                TestCase tc = testCases.get(index);
 
-            String testCaseKey =
-                    jiraService.createTestCase(
-                            "SCRUM",
-                            tc);
+                                String testCaseKey = jiraService.createTestCase(
+                                                "SCRUM",
+                                                tc);
 
-            jiraService.linkIssue(
-                    storyKey,
-                    testCaseKey);
+                                jiraService.linkIssue(
+                                                storyKey,
+                                                testCaseKey);
 
-            uploadedCount++;
+                                uploadedCount++;
 
-            String jiraLink =
-                    "https://genaiauto.atlassian.net/browse/" + testCaseKey;
+                                String jiraLink = "https://genaiauto.atlassian.net/browse/" + testCaseKey;
 
-            jiraLinks.add(jiraLink);
+                                jiraLinks.add(jiraLink);
 
-            log.info("Uploaded Test Case : {}", testCaseKey);
+                                log.info("Uploaded Test Case : {}", testCaseKey);
 
+                        } catch (Exception ex) {
+
+                                failedCount++;
+
+                                log.error(
+                                                "Failed to upload test case : {}",
+                                                testCases.get(index).getTitle(),
+                                                ex);
+                        }
+
+                }
+
+                boolean success = failedCount == 0;
+
+                String message = uploadedCount + " of "
+                                + selectedIndexes.size()
+                                + " test case(s) uploaded successfully.";
+
+                return new UploadResponse(
+                                success,
+                                message,
+                                uploadedCount,
+                                failedCount,
+                                jiraLinks);
         }
-        catch (Exception ex) {
-
-            failedCount++;
-
-            log.error(
-                    "Failed to upload test case : {}",
-                    testCases.get(index).getTitle(),
-                    ex);
-        }
-
-    }
-
-    boolean success = failedCount == 0;
-
-    String message =
-            uploadedCount + " of "
-                    + selectedIndexes.size()
-                    + " test case(s) uploaded successfully.";
-
-    return new UploadResponse(
-            success,
-            message,
-            uploadedCount,
-            failedCount,
-            jiraLinks);
-}
 
         private String buildJiraDescription(TestCase tc) {
 

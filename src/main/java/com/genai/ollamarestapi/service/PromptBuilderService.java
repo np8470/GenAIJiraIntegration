@@ -2,193 +2,199 @@ package com.genai.ollamarestapi.service;
 
 import org.springframework.stereotype.Service;
 
+import com.genai.ollamarestapi.audit.Audit;
+import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.model.GenerationType;
 
 @Service
 public class PromptBuilderService {
+  
+  @Audit(action = AuditAction.BUILD_PROMPT, message = "Build prompt for Work Item id {0} and Generation Type {1}")
+  public String buildPrompt(
+      String story,
+      GenerationType type) {
 
-    public String buildPrompt(
-            String story,
-            GenerationType type) {
+    return switch (type) {
 
-        return switch (type) {
+      case TEST_CASES ->
+        manualPrompt(story);
 
-            case TEST_CASES ->
-                manualPrompt(story);
+      case API_TEST_CASES ->
+        apiPrompt(story);
 
-            case API_TEST_CASES ->
-                apiPrompt(story);
+      case SELENIUM_SCRIPT ->
+        automationPrompt(story);
 
-            case SELENIUM_SCRIPT ->
-                automationPrompt(story);
-
-            default ->
-                manualPrompt(story);
-        };
-    }
-
-    private String manualPrompt(String story) {
-
-        return """
-
-Generate comprehensive Manual test cases.
-
-IMPORTANT RULES
-
-1. Return ONLY valid JSON.
-2. Do NOT use markdown.
-3. Do NOT use explanations.
-4. Do NOT number test cases.
-5. Response MUST start with [
-6. Response MUST end with ]
-
-Schema
-
-[
-  {
-    "id":"TC_001",
-    "title":"",
-    "description":"",
-    "priority":"High",
-    "type":"Functional",
-    "precondition":"",
-    "steps":[
-      ""
-    ],
-    "expectedResult":""
+      default ->
+        manualPrompt(story);
+    };
   }
-]
 
-expectedResult MUST be a string.
+  @Audit(action = AuditAction.MANUAL_PROMPT, message = "UI test cases prompt for Work Item id {0}")
+  private String manualPrompt(String story) {
 
-DO NOT return an array.
+    return """
 
-Correct:
+        Generate comprehensive Manual test cases.
 
-"expectedResult":"Login successful"
+        IMPORTANT RULES
 
-Wrong:
+        1. Return ONLY valid JSON.
+        2. Do NOT use markdown.
+        3. Do NOT use explanations.
+        4. Do NOT number test cases.
+        5. Response MUST start with [
+        6. Response MUST end with ]
 
-"expectedResult":[
-  "Login successful"
-]
+        Schema
 
-                                                User Story:
-                                                %s
-                                                """.formatted(story);
+        [
+          {
+            "id":"TC_001",
+            "title":"",
+            "description":"",
+            "priority":"High",
+            "type":"Functional",
+            "precondition":"",
+            "steps":[
+              ""
+            ],
+            "expectedResult":""
+          }
+        ]
 
-    }
+        expectedResult MUST be a string.
 
-    private String apiPrompt(String story) {
+        DO NOT return an array.
 
-        return """
-                                Generate REST API Test Cases.
+        Correct:
 
-                                Cover
+        "expectedResult":"Login successful"
 
-                                Positive
+        Wrong:
 
-                                Negative
+        "expectedResult":[
+          "Login successful"
+        ]
 
-                                Authentication
+                                                        User Story:
+                                                        %s
+                                                        """.formatted(story);
 
-                                Authorization
+  }
 
-                                Headers
+  @Audit(action = AuditAction.API_PROMPT, message = "API test cases prompt for Work Item id {0}")
+  private String apiPrompt(String story) {
 
-                                Status Codes
+    return """
+                        Generate REST API Test Cases.
 
-                                Boundary Values
+                        Cover
 
-                                Validation
+                        Positive
 
-                                Error Handling
+                        Negative
 
-                                Return ONLY JSON array.
-                                IMPORTANT RULES:
-                IMPORTANT
+                        Authentication
 
-                Your response MUST satisfy ALL rules.
+                        Authorization
 
-                1 Return ONLY one JSON array.
+                        Headers
 
-                2 Do NOT write explanations.
+                        Status Codes
 
-                3 Do NOT use markdown.
+                        Boundary Values
 
-                4 Do NOT use ```json
+                        Validation
 
-                5 Do NOT number test cases.
+                        Error Handling
 
-                6 Do NOT say "Here are..."
+                        Return ONLY JSON array.
+                        IMPORTANT RULES:
+        IMPORTANT
 
-                7 Response MUST begin with [
+        Your response MUST satisfy ALL rules.
 
-                8 Response MUST end with ]
+        1 Return ONLY one JSON array.
 
-                If you violate these rules the response is invalid.
+        2 Do NOT write explanations.
 
+        3 Do NOT use markdown.
 
+        4 Do NOT use ```json
 
-                                                Example:
+        5 Do NOT number test cases.
 
-                                                [
-                                                 {
-                                                   "id":"API_TC_001",
-                                                   "title":"Create User Success",
-                                                   "description":"Verify create user endpoint",
-                                                   "priority":"High",
-                                                   "type":"API",
-                                                   "precondition":"API available",
-                                                   "steps":[
-                                                      "Send POST /users",
-                                                      "Pass valid payload"
-                                                   ],
-                                                   "expectedResult":"201 Created"
-                                                 }
-                                                ]
-                                Each object contains
+        6 Do NOT say "Here are..."
 
-                                id
-                                title
-                                description
-                                priority
-                                type
-                                precondition
-                                steps
-                                expectedResult
+        7 Response MUST begin with [
 
-                                Story
+        8 Response MUST end with ]
 
-                                %s
-                                """.formatted(story);
-
-    }
-
-    private String automationPrompt(String story) {
-
-        return """
-                Generate Selenium Automation Test Cases.
-
-                Return ONLY JSON.
-
-                Each object contains
-
-                id
-                title
-                description
-                priority
-                type
-                precondition
-                steps
-                expectedResult
+        If you violate these rules the response is invalid.
 
 
-                Story
 
-                %s
-                """.formatted(story);
+                                        Example:
 
-    }
+                                        [
+                                         {
+                                           "id":"API_TC_001",
+                                           "title":"Create User Success",
+                                           "description":"Verify create user endpoint",
+                                           "priority":"High",
+                                           "type":"API",
+                                           "precondition":"API available",
+                                           "steps":[
+                                              "Send POST /users",
+                                              "Pass valid payload"
+                                           ],
+                                           "expectedResult":"201 Created"
+                                         }
+                                        ]
+                        Each object contains
+
+                        id
+                        title
+                        description
+                        priority
+                        type
+                        precondition
+                        steps
+                        expectedResult
+
+                        Story
+
+                        %s
+                        """.formatted(story);
+
+  }
+
+  @Audit(action = AuditAction.SELENIUM_SCRIPT_PROMPT, message = "Selenium script for Work Item id {0}")
+  private String automationPrompt(String story) {
+
+    return """
+        Generate Selenium Automation Test Cases.
+
+        Return ONLY JSON.
+
+        Each object contains
+
+        id
+        title
+        description
+        priority
+        type
+        precondition
+        steps
+        expectedResult
+
+
+        Story
+
+        %s
+        """.formatted(story);
+
+  }
 
 }

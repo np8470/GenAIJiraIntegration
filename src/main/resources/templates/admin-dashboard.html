@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>TestPilot AI Enterprise Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="/js/dashboard.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container-fluid py-4">
+
+        <!-- ================= HEADER ================= -->
+
+        <div class="card shadow-lg mb-4">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h1 class="display-6 fw-bold">
+
+                            ⚡ TestPilot <span class="text-primary">AI</span>
+
+                        </h1>
+
+                        <p class="text-muted mb-0">
+
+                            Enterprise Dashboard
+
+                        </p>
+
+                    </div>
+
+                    <div class="text-end">
+
+                        <div class="welcome-user">
+
+                            <i class="bi bi-person-circle"></i>
+
+                            <span>
+
+                                Welcome,
+
+                                <strong th:text="${username}">
+                                    admin
+                                </strong>
+
+                            </span>
+
+                        </div>
+
+                        <form th:action="@{/logout}" method="post">
+
+                            <button class="btn btn-danger">
+
+                                Logout
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= KPI CARDS ================= -->
+
+        <div class="row g-4">
+
+            <div class="col-lg-3">
+
+                <div class="card dashboard-card text-center shadow">
+
+                    <div class="card-body">
+
+                        <div class="display-4">
+
+                            🤖
+
+                        </div>
+
+                        <h5>
+
+                            AI Generations
+
+                        </h5>
+
+                        <h2 class="text-primary" th:text="${dashboard.totalAiGenerations}">
+                        </h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <div class="card dashboard-card text-center shadow">
+
+                    <div class="card-body">
+
+                        <div class="display-4">
+
+                            ☁️
+
+                        </div>
+
+                        <h5>
+
+                            Jira Uploads
+
+                        </h5>
+
+                        <h2 class="text-success" th:text="${dashboard.totalUploads}">
+                        </h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <div class="card dashboard-card text-center shadow">
+
+                    <div class="card-body">
+
+                        <div class="display-4">
+
+                            👥
+
+                        </div>
+
+                        <h5>
+
+                            Users
+
+                        </h5>
+
+                        <h2 class="text-warning" th:text="${dashboard.totalUsers}">
+                        </h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <div class="card dashboard-card text-center shadow">
+
+                    <div class="card-body">
+
+                        <div class="display-4">
+
+                            📋
+
+                        </div>
+
+                        <h5>
+
+                            Audit Logs
+
+                        </h5>
+
+                        <h2 class="text-danger" th:text="${dashboard.totalAuditLogs}">
+                        </h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= CHARTS ================= -->
+
+        <div class="row mt-5">
+
+            <div class="col-lg-6">
+
+                <div class="card shadow">
+
+                    <div class="card-header">
+
+                        AI Usage Statistics
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas id="usageChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+
+                <div class="card shadow">
+
+                    <div class="card-header">
+
+                        Upload Statistics
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas id="uploadChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= RECENT AUDIT ================= -->
+
+        <div class="card shadow mt-5">
+
+            <div class="card-header bg-primary text-white">
+
+                Recent Audit Activity
+
+            </div>
+
+            <div class="card-body">
+
+                <table class="table table-hover">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>User</th>
+
+                            <th>Action</th>
+
+                            <th>Status</th>
+
+                            <th>Details</th>
+
+                            <th>Execution</th>
+
+                            <th>Timestamp</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="log : ${dashboard.recentLogs}">
+
+                            <td th:text="${log.username}"></td>
+
+                            <td th:text="${log.action}"></td>
+
+                            <td>
+
+                                <span class="badge bg-success" th:if="${log.status=='SUCCESS'}">
+
+                                    SUCCESS
+
+                                </span>
+
+                                <span class="badge bg-danger" th:if="${log.status=='FAILED'}">
+
+                                    FAILED
+
+                                </span>
+
+                            </td>
+
+                            <td th:text="${log.details}"></td>
+
+                            <td>
+
+                                <span th:text="${log.executionTimeMs}"></span>
+
+                                ms
+
+                            </td>
+
+                            <td th:text="${#temporals.format(log.timestamp,'dd-MMM-yyyy HH:mm')}"></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- ================= QUICK ACTIONS ================= -->
+
+        <div class="card shadow mt-5">
+
+            <div class="card-header bg-dark text-white">
+
+                Quick Actions
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row text-center">
+
+                    <div class="col-md-3">
+
+                        <a th:href="@{/dashboard}" class="btn btn-primary w-100">
+
+                            🤖 Generate Test Cases
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <a th:href="@{/admin/audit}" class="btn btn-warning w-100">
+
+                            📋 Audit Logs
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <a th:href="@{/admin/users}" class="btn btn-success w-100">
+
+                            👥 User Management
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <a th:href="@{/admin/reports}" class="btn btn-secondary w-100">
+
+                            📊 Reports
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Dashboard Statistics -->
+    <div id="dashboardStats" th:data-ai="${dashboard.totalAiGenerations}" th:data-uploads="${dashboard.totalUploads}"
+        th:data-users="${dashboard.totalUsers}" th:data-audits="${dashboard.totalAuditLogs}" style="display:none;">
+    </div>
+
+
+    <script>
+
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1486,3 +1486,312 @@ body.dark-mode .footer-divider{
     color:#6c757d;
 
 }
+
+
+/* ==========================================
+   LOGIN PAGE
+========================================== */
+
+.login-body{
+
+    background:linear-gradient(135deg,#0d6efd,#5b8def);
+
+    min-height:100vh;
+
+}
+
+.login-card{
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+}
+
+.brand-logo{
+
+    font-size:42px;
+
+}
+
+.brand-title{
+
+    font-weight:700;
+
+    margin-bottom:6px;
+
+}
+
+.brand-subtitle{
+
+    opacity:.95;
+
+}
+
+.brand-version{
+
+    font-style:italic;
+
+    opacity:.85;
+
+}
+
+.login-card .form-control{
+
+    height:48px;
+
+}
+
+.login-card .input-group-text{
+
+    width:48px;
+
+    justify-content:center;
+
+}
+
+.login-card .btn{
+
+    height:48px;
+
+    font-weight:600;
+
+}
+
+/* Dark Mode Support */
+
+body.dark-mode .login-body{
+
+    background:#121212;
+
+}
+
+body.dark-mode .login-card{
+
+    background:#1f1f1f;
+
+    color:white;
+
+}
+
+body.dark-mode .login-card .card-body{
+
+    background:#1f1f1f;
+
+}
+
+body.dark-mode .login-card .card-footer{
+
+    background:#181818;
+
+    color:#ddd;
+
+}
+
+body.dark-mode .login-card .form-control{
+
+    background:#2c2c2c;
+
+    color:white;
+
+    border-color:#555;
+
+}
+
+body.dark-mode .login-card .input-group-text{
+
+    background:#343434;
+
+    color:white;
+
+    border-color:#555;
+
+}
+
+
+
+/*====================================================
+                BRAND HEADER
+=====================================================*/
+
+.brand-header{
+
+    margin-bottom:45px;
+
+}
+
+.brand-container{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:25px;
+
+}
+
+
+
+
+
+.header-actions .btn{
+
+    border-radius:10px;
+
+    padding:10px 18px;
+
+    font-weight:600;
+
+}
+
+.form-switch{
+
+    margin-bottom:0;
+
+}
+
+.form-check-input{
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+
+
+.header-actions .form-check{
+
+    margin-bottom:0;
+
+}
+
+.header-actions form{
+
+    margin:0;
+
+}
+
+
+/*====================================================
+                MOBILE
+=====================================================*/
+
+@media(max-width:992px){
+
+.brand-container{
+
+    justify-content:center;
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+
+
+}
+
+/*====================================================
+        TOP RIGHT HEADER
+=====================================================*/
+
+.top-header-actions{
+
+    position:absolute;
+
+    top:30px;
+
+    right:40px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:22px;
+
+    z-index:9999;
+
+}
+
+
+
+.top-header-actions .btn{
+
+    border-radius:10px;
+
+    padding:10px 18px;
+
+    font-weight:600;
+
+}
+
+
+
+.welcome-user{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:18px;
+
+    font-weight:500;
+
+}
+
+.welcome-user i{
+
+    font-size:34px;
+
+    color:#4DA3FF;
+
+}
+
+.welcome-user strong{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    margin-left:4px;
+
+}
+
+body:not(.dark-mode) .welcome-user{
+
+    color:#222;
+
+}
+
+body.dark-mode .welcome-user{
+
+    color:#fff;
+
+}
+
+@media(max-width:992px){
+
+.top-header-actions{
+
+    position:static;
+
+    justify-content:center;
+
+    margin-top:20px;
+
+    margin-bottom:30px;
+
+    flex-wrap:wrap;
+
+}
+
+}
+
+
+

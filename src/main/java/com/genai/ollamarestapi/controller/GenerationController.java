@@ -1,5 +1,7 @@
 package com.genai.ollamarestapi.controller;
 
+import com.genai.ollamarestapi.audit.Audit;
+import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.model.GenerateResponse;
 import com.genai.ollamarestapi.model.GenerationType;
 import com.genai.ollamarestapi.model.UploadResponse;
@@ -20,6 +22,7 @@ public class GenerationController {
     private final TestCaseOrchestratorService service;
 
     @GetMapping("/generate")
+    @Audit(action = AuditAction.GENERATE_TEST_CASE, message = "Generated AI Test Cases for Work Item {0} using type {1}")
     public GenerateResponse generate(
             @RequestParam String storyKey,
             @RequestParam String type,
@@ -33,6 +36,7 @@ public class GenerationController {
     }
 
     @PostMapping("/upload")
+    @Audit(action = AuditAction.UPLOAD_TO_JIRA, message = "Uploaded {0} Test Cases to Jira")
     public UploadResponse uploadToJira(@RequestBody List<Integer> selectedIndexes, HttpSession session) {
 
         return service.uploadSelectedToJira(

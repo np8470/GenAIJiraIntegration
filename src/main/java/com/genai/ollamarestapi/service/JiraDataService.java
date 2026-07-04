@@ -1,5 +1,7 @@
 package com.genai.ollamarestapi.service;
 
+import com.genai.ollamarestapi.audit.Audit;
+import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.model.jira.JiraApiProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,6 +83,7 @@ public class JiraDataService implements Function<JiraDataService.Request, JiraDa
         }
     }
 
+    
     private String extractAcceptanceCriteria(JsonNode rootNode) {
 
         StringBuilder sb = new StringBuilder();
