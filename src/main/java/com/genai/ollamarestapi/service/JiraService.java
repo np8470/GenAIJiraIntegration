@@ -27,7 +27,7 @@ public class JiraService {
     return jiraUrl + "/browse/" + issueKey;
   }
 
-  @Audit(action = AuditAction.CREATE_TEST_CASE, message = "Created testcases {1} for project {0}")
+  @Audit(action = AuditAction.CREATE_TEST_CASE, message = "Created testcases for project {0}")
   public String createTestCase(String projectKey, TestCase tc) {
     String jiraDescription = buildJiraDescription(tc);
     String body = """

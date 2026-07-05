@@ -23,7 +23,7 @@ public class ResponseParser {
     /**
      * Parse Ollama response into TestCase list.
      */
-    @Audit(action = AuditAction.PARSE_OLLAMA_RES_TO_TESTCASE ,message = "Parse Ollama response {0} into TestCase list")
+    @Audit(action = AuditAction.PARSE_OLLAMA_RES_TO_TESTCASE ,message = "Parse Ollama response  into Test Cases list")
     public List<TestCase> parse(String response) {
 
         try {

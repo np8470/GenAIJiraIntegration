@@ -15,7 +15,7 @@ import com.genai.ollamarestapi.audit.AuditAction;
 public class LoginController {
 
     @GetMapping("/login")
-    @Audit(action = AuditAction.LOGIN, message = "User authenticated successfully")
+    //@Audit(action = AuditAction.LOGIN, message = "User authenticated successfully")
     public String login(Authentication authentication) {
 
         if (authentication != null &&

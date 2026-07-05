@@ -1,6 +1,9 @@
 package com.genai.ollamarestapi.config;
 
 import com.genai.ollamarestapi.security.CustomUserDetailsService;
+
+import jakarta.annotation.PostConstruct;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,11 +24,17 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
+    @PostConstruct
+    public void init() {
+
+        System.out.println("******** SecurityConfig Loaded ********");
+
+    }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider();
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
@@ -44,8 +53,7 @@ public class SecurityConfig {
 
                 // CSRF
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**")
-                )
+                        .ignoringRequestMatchers("/api/**"))
 
                 // URL Authorization
                 .authorizeHttpRequests(auth -> auth
@@ -56,8 +64,8 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
-                                "/favicon.ico"
-                        ).permitAll()
+                                "/favicon.ico")
+                        .permitAll()
 
                         // API
                         .requestMatchers("/api/**")
@@ -141,10 +149,10 @@ public class SecurityConfig {
 
                         .accessDeniedPage("/access-denied")
 
-                )
+                );
 
                 // HTTP Basic (optional for REST APIs)
-                .httpBasic(Customizer.withDefaults());
+                //.httpBasic(Customizer.withDefaults());
 
         return http.build();
     }

@@ -1,13 +1,26 @@
 // ui.js
 
-function showToast(message) {
-    document.getElementById("toastBody").innerHTML = message;
+function showToast(message, type = "primary") {
 
-    const toast = new bootstrap.Toast(
-        document.getElementById("statusToast")
-    );
+    const toastBody =
+        document.getElementById("toastBody");
+
+    if (toastBody) {
+
+        toastBody.innerHTML = message;
+
+        toastBody.className =
+            "toast-body text-" + type;
+
+    }
+
+    const toast =
+        bootstrap.Toast.getOrCreateInstance(
+            document.getElementById("statusToast")
+        );
 
     toast.show();
+
 }
 
 function copyIssueKey(issueKey) {

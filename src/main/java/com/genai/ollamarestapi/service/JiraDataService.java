@@ -19,7 +19,7 @@ public class JiraDataService implements Function<JiraDataService.Request, JiraDa
 
     private static final Logger log = LoggerFactory.getLogger(JiraDataService.class);
     private final JiraApiProperties jiraApiProperties;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
     private final WebClient webClient;
 
     /*
@@ -34,20 +34,38 @@ public class JiraDataService implements Function<JiraDataService.Request, JiraDa
      * }
      */
 
+    /*
+     * public JiraDataService(
+     * JiraApiProperties jiraApiProperties,
+     * WebClient jiraWebClient) {
+     * 
+     * this.jiraApiProperties = jiraApiProperties;
+     * log.info("Username : {}", jiraApiProperties.getUsername());
+     * log.info("Api URL  : {}", jiraApiProperties.getApiUrl());
+     * log.info("Token    : {}", jiraApiProperties.getApiToken());
+     * this.webClient = jiraWebClient.mutate()
+     * .baseUrl(jiraApiProperties.getApiUrl())
+     * .defaultHeaders(headers ->
+     * headers.setBasicAuth(
+     * jiraApiProperties.getUsername(),
+     * jiraApiProperties.getApiToken()))
+     * .build();
+     * }
+     */
+
     public JiraDataService(
             JiraApiProperties jiraApiProperties,
-            WebClient jiraWebClient) {
+            WebClient jiraWebClient,
+            ObjectMapper objectMapper) {
 
         this.jiraApiProperties = jiraApiProperties;
-        log.info("Username : {}", jiraApiProperties.getUsername());
-        log.info("Api URL  : {}", jiraApiProperties.getApiUrl());
-        log.info("Token    : {}", jiraApiProperties.getApiToken());
+        this.objectMapper = objectMapper;
+
         this.webClient = jiraWebClient.mutate()
                 .baseUrl(jiraApiProperties.getApiUrl())
-                .defaultHeaders(headers ->
-                        headers.setBasicAuth(
-                                jiraApiProperties.getUsername(),
-                                jiraApiProperties.getApiToken()))
+                .defaultHeaders(headers -> headers.setBasicAuth(
+                        jiraApiProperties.getUsername(),
+                        jiraApiProperties.getApiToken()))
                 .build();
     }
 
@@ -83,7 +101,6 @@ public class JiraDataService implements Function<JiraDataService.Request, JiraDa
         }
     }
 
-    
     private String extractAcceptanceCriteria(JsonNode rootNode) {
 
         StringBuilder sb = new StringBuilder();

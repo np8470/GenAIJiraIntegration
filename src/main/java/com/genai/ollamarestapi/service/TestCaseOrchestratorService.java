@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.genai.ollamarestapi.audit.Audit;
 import com.genai.ollamarestapi.audit.AuditAction;
+import com.genai.ollamarestapi.exception.AIException;
 import com.genai.ollamarestapi.exception.JiraException;
 import com.genai.ollamarestapi.model.GenerateResponse;
 import com.genai.ollamarestapi.model.GenerationType;
@@ -18,6 +19,8 @@ import com.genai.ollamarestapi.model.jira.JiraApiProperties;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,8 @@ public class TestCaseOrchestratorService {
         private final JiraService jiraService;
         private final JiraApiProperties jiraApiProperties;
 
+        @Retry(name = "ollamaRetry", fallbackMethod = "ollamaFallback")
+        @CircuitBreaker(name = "ollamaCircuit", fallbackMethod = "ollamaFallback")
         @Audit(action = AuditAction.GENERATE_RESPONSE, message = "Generate response from Work Item id {0} for Generation type {1}")
         public GenerateResponse generateOnly(
                         String storyKey,
@@ -64,7 +69,7 @@ public class TestCaseOrchestratorService {
                 }
         }
 
-        @Audit(action = AuditAction.UPLOAD_SELECTED_TO_JIRA, message = "Upload selected testcases {0} to Jira")
+        @Audit(action = AuditAction.UPLOAD_SELECTED_TO_JIRA, message = "Upload number of selected testcases {0} to Jira")
         @SuppressWarnings("unchecked")
         public UploadResponse uploadSelectedToJira(
                         List<Integer> selectedIndexes,
@@ -135,6 +140,17 @@ public class TestCaseOrchestratorService {
                                 uploadedCount,
                                 failedCount,
                                 jiraLinks);
+        }
+
+        public GenerateResponse ollamaFallback(
+                        String storyKey,
+                        GenerationType type,
+                        HttpSession session,
+                        Exception ex) {
+
+                throw new AIException(
+                                "AI service is temporarily unavailable. Please try again later.",
+                                ex);
         }
 
         private String buildJiraDescription(TestCase tc) {

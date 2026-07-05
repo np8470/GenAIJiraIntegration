@@ -20,23 +20,27 @@ let generatedTestCases = [];
    Toast Notification
 ====================================================== */
 
-function showToast(message) {
+function showToast(message, type = "primary") {
 
-    const toastBody = document.getElementById("toastBody");
+    const toastBody =
+        document.getElementById("toastBody");
 
     if (toastBody) {
+
         toastBody.innerHTML = message;
+
+        toastBody.className =
+            "toast-body text-" + type;
+
     }
 
-    const toastElement = document.getElementById("statusToast");
+    const toast =
+        bootstrap.Toast.getOrCreateInstance(
+            document.getElementById("statusToast")
+        );
 
-    if (toastElement) {
+    toast.show();
 
-        const toast =
-            bootstrap.Toast.getOrCreateInstance(toastElement);
-
-        toast.show();
-    }
 }
 
 
@@ -287,16 +291,27 @@ function resetGenerationScreen() {
    HTTP GET Helper
 ====================================================== */
 
+/* ======================================================
+   HTTP GET Helper
+====================================================== */
+
 async function getJson(url) {
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+
+        headers: {
+
+            "Accept": "application/json"
+
+        }
+
+    });
 
     if (!response.ok) {
 
-        const text =
-            await response.text();
+        const error = await response.json();
 
-        throw new Error(text);
+        throw new Error(error.message);
 
     }
 
@@ -304,6 +319,10 @@ async function getJson(url) {
 
 }
 
+
+/* ======================================================
+   HTTP POST Helper
+====================================================== */
 
 /* ======================================================
    HTTP POST Helper
@@ -317,7 +336,9 @@ async function postJson(url, body) {
 
         headers: {
 
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+
+            "Accept": "application/json"
 
         },
 
@@ -327,10 +348,9 @@ async function postJson(url, body) {
 
     if (!response.ok) {
 
-        const text =
-            await response.text();
+        const error = await response.json();
 
-        throw new Error(text);
+        throw new Error(error.message);
 
     }
 

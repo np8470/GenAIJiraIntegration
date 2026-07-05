@@ -40,21 +40,12 @@ async function uploadToJira() {
 
     try {
 
-        const response = await fetch("/api/v1/upload", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(selected)
-
-        });
+        const result = await postJson(
+            "/api/v1/upload",
+            selected
+        );
 
         updateProgress(60);
-
-        const result = await response.json();
 
         updateProgress(100);
 
@@ -87,7 +78,7 @@ async function uploadToJira() {
             html += "</button>";
 
             html += "<ul class='list-group'>";
-                        jiraLinks.forEach(link => {
+            jiraLinks.forEach(link => {
 
                 const issueKey =
                     link.substring(link.lastIndexOf("/") + 1);
@@ -142,12 +133,12 @@ async function uploadToJira() {
 
         showToast(result.message);
 
-            } catch (e) {
+    } catch (e) {
 
         document.getElementById("errorAlert").style.display = "block";
         document.getElementById("errorAlert").innerHTML = e.message;
 
-        showToast("Upload failed.");
+        showToast(e.message, "danger");
 
     } finally {
 
