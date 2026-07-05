@@ -83,6 +83,13 @@ public class SecurityConfig {
                         .requestMatchers("/", "/dashboard")
                         .authenticated()
 
+                        // actuator health check
+                        .requestMatchers("/actuator/health").permitAll()
+
+                        .requestMatchers("/actuator/info").permitAll()
+
+                        .requestMatchers("/actuator/**").hasRole("ADMIN")
+
                         .anyRequest()
                         .authenticated()
 
@@ -151,8 +158,8 @@ public class SecurityConfig {
 
                 );
 
-                // HTTP Basic (optional for REST APIs)
-                //.httpBasic(Customizer.withDefaults());
+        // HTTP Basic (optional for REST APIs)
+        // .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
