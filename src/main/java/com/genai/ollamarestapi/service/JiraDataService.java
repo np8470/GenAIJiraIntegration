@@ -3,6 +3,9 @@ package com.genai.ollamarestapi.service;
 import com.genai.ollamarestapi.audit.Audit;
 import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.model.jira.JiraApiProperties;
+
+import lombok.extern.slf4j.Slf4j;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -13,11 +16,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import java.util.function.Function;
 
+@Slf4j
 @Validated
 @Service
 public class JiraDataService implements Function<JiraDataService.Request, JiraDataService.Response> {
 
-    private static final Logger log = LoggerFactory.getLogger(JiraDataService.class);
+    //private static final Logger log = LoggerFactory.getLogger(JiraDataService.class);
     private final JiraApiProperties jiraApiProperties;
     private final ObjectMapper objectMapper;
     private final WebClient webClient;

@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.genai.ollamarestapi.audit.Audit;
 import com.genai.ollamarestapi.audit.AuditAction;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class AccessDeniedController {
 
@@ -26,6 +29,8 @@ public class AccessDeniedController {
 
         model.addAttribute("message",
                 "You do not have permission to access this resource.");
+
+        log.info("Access Denied page");        
 
         return "access-denied";
     }

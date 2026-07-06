@@ -11,17 +11,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.genai.ollamarestapi.audit.Audit;
 import com.genai.ollamarestapi.audit.AuditAction;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class LoginController {
 
     @GetMapping("/login")
-    //@Audit(action = AuditAction.LOGIN, message = "User authenticated successfully")
+    @Audit(action = AuditAction.LOGIN, message = "User authenticated successfully")
     public String login(Authentication authentication) {
 
         if (authentication != null &&
             authentication.isAuthenticated() &&
             !(authentication instanceof AnonymousAuthenticationToken)) {
-
+            log.info("User authenticated successfully, redirect to Dashboard Page");
             return "redirect:/dashboard";
         }
 
@@ -44,7 +47,7 @@ public class LoginController {
             model.addAttribute("username",
                                principal.getName());
         }
-
+        log.info("Dashboard Page viewed");
         return "dashboard";
     }
 

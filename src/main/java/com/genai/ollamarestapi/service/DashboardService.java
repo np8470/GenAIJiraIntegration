@@ -7,6 +7,9 @@ import com.genai.ollamarestapi.audit.AuditRepository;
 import com.genai.ollamarestapi.model.DashboardDTO;
 import com.genai.ollamarestapi.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class DashboardService {
 

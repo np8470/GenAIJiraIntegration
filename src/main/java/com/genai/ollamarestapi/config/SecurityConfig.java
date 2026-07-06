@@ -5,6 +5,8 @@ import com.genai.ollamarestapi.security.CustomUserDetailsService;
 import jakarta.annotation.PostConstruct;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -16,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+@Slf4j
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
@@ -27,7 +30,8 @@ public class SecurityConfig {
     @PostConstruct
     public void init() {
 
-        System.out.println("******** SecurityConfig Loaded ********");
+        /* System.out.println("******** SecurityConfig Loaded ********"); */
+        log.info("******** SecurityConfig Loaded ********");
 
     }
 

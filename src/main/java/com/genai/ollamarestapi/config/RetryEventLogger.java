@@ -2,8 +2,11 @@ package com.genai.ollamarestapi.config;
 
 import io.github.resilience4j.retry.RetryRegistry;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class RetryEventLogger {
 
@@ -22,11 +25,18 @@ public class RetryEventLogger {
 
                 .onRetry(event ->
 
-                    System.out.println(
+                    /* System.out.println(
                             "Retry: "
                             + retry.getName()
                             + " Attempt="
-                            + event.getNumberOfRetryAttempts()))
+                            + event.getNumberOfRetryAttempts())) */
+
+                    log.info(
+                            "Retry: {}"
+                            , retry.getName()
+                            + " Attempt {}"
+                            , event.getNumberOfRetryAttempts()))        
+
 
                 .onSuccess(event ->
 

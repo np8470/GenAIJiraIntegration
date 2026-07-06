@@ -39,7 +39,8 @@ public class TestCaseOrchestratorService {
                         String storyKey,
                         GenerationType type,
                         HttpSession session) {
-                System.out.println("Inside generateOnly()");
+                //System.out.println("Inside generateOnly()");
+                 log.info("Inside generateOnly()");
                 try {
 
                         JiraDataService.Response story = jiraDataService.apply(
@@ -211,8 +212,10 @@ public class TestCaseOrchestratorService {
                 for (TestCase tc : testCases) {
                         log.info("Parsed Test Case: {}", tc);
 
-                        System.out.println("Steps = " + tc.getSteps());
-                        System.out.println("Expected = " + tc.getExpectedResult());
+                        /* System.out.println("Steps = " + tc.getSteps());
+                        System.out.println("Expected = " + tc.getExpectedResult()); */
+                        log.info("Steps {}", tc.getSteps());
+                        log.info("Expected {}", tc.getExpectedResult());
                         String testCaseKey = jiraService.createTestCase(
                                         "SCRUM",
                                         tc);

@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.genai.ollamarestapi.audit.AuditLog;
 import com.genai.ollamarestapi.audit.AuditRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class AuditController {
 
@@ -30,7 +33,7 @@ public class AuditController {
                                 Sort.by(Sort.Direction.DESC, "timestamp")));
 
         model.addAttribute("logs", logs.getContent());
-
+        log.info("Audit logs page");  
         return "audit";
     }
 

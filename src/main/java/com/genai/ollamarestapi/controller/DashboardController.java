@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.genai.ollamarestapi.service.DashboardService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class DashboardController {
 
@@ -28,7 +31,7 @@ public class DashboardController {
         model.addAttribute(
                 "username",
                 principal.getName());
-
+        log.info("Admin-dashboard page");
         return "admin-dashboard";
     }
 

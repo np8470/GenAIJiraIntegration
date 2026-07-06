@@ -12,6 +12,9 @@ import com.genai.ollamarestapi.entity.User;
 import com.genai.ollamarestapi.repository.RoleRepository;
 import com.genai.ollamarestapi.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -37,13 +40,21 @@ public class DataInitializer implements CommandLineRunner {
 
         createNormalUser();
 
-        System.out.println("-------------------------------------------");
+        /* System.out.println("-------------------------------------------");
         System.out.println(" Default Security Data Initialized");
         System.out.println(" Admin Username : admin");
         System.out.println(" Admin Password : admin123");
         System.out.println(" User Username  : user");
         System.out.println(" User Password  : user123");
-        System.out.println("-------------------------------------------");
+        System.out.println("-------------------------------------------"); */
+
+        log.info("-------------------------------------------");
+        log.info(" Default Security Data Initialized");
+        log.info(" Admin Username : admin");
+        log.info(" Admin Password : admin123");
+        log.info(" User Username  : user");
+        log.info(" User Password  : user123");
+        log.info("-------------------------------------------");
     }
 
     /**

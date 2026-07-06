@@ -7,8 +7,11 @@ import org.springframework.context.annotation.Description;
 import com.genai.ollamarestapi.model.jira.JiraApiProperties;
 import com.genai.ollamarestapi.service.JiraDataService;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.function.Function;
 
+@Slf4j
 @Configuration
 public class JiraFunctionConfig {
 
@@ -29,7 +32,8 @@ public class JiraFunctionConfig {
     }
 
     private void validateJiraConfigProperties(JiraApiProperties properties) {
-       System.out.println("Jira URL = "+jiraApiProperties.getApiUrl());
+       //System.out.println("Jira URL = "+jiraApiProperties.getApiUrl());
+        log.info("Jira URL {}", jiraApiProperties.getApiUrl());
         if (properties.getApiUrl() == null || properties.getApiUrl().isEmpty()) {
             throw new IllegalArgumentException("Jira API URL must be provided.");
         }

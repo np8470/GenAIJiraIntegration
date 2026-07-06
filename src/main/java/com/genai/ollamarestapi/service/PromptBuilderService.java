@@ -6,6 +6,9 @@ import com.genai.ollamarestapi.audit.Audit;
 import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.model.GenerationType;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class PromptBuilderService {
   
@@ -13,7 +16,7 @@ public class PromptBuilderService {
   public String buildPrompt(
       String story,
       GenerationType type) {
-
+    log.info("Build Prompt for Work Item id and Generation Type {} -> {}",story, type);
     return switch (type) {
 
       case TEST_CASES ->
