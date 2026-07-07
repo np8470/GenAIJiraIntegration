@@ -1,49 +1,80 @@
 package com.genai.ollamarestapi.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.genai.ollamarestapi.audit.AuditAction;
-import com.genai.ollamarestapi.audit.AuditRepository;
-import com.genai.ollamarestapi.model.DashboardDTO;
-import com.genai.ollamarestapi.repository.UserRepository;
+import com.genai.ollamarestapi.dto.DashboardStatisticsResponse;
+import com.genai.ollamarestapi.entity.User;
+import com.genai.ollamarestapi.repository.DashboardRepository;
+import com.genai.ollamarestapi.repository.GenerationHistoryRepository;
+import com.genai.ollamarestapi.repository.GenerationTestCaseRepository;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class DashboardService {
 
-    private final AuditRepository auditRepository;
-    private final UserRepository userRepository;
+        private final DashboardRepository dashboardRepository;
 
-    public DashboardService(AuditRepository auditRepository,
-                            UserRepository userRepository) {
+        private final GenerationTestCaseRepository generationTestCaseRepository;
+        private final GenerationHistoryRepository generationHistoryRepository;
 
-        this.auditRepository = auditRepository;
-        this.userRepository = userRepository;
-    }
+        public DashboardStatisticsResponse statistics(User user) {
 
-    public DashboardDTO getDashboard() {
+                long totalGenerations = generationHistoryRepository.countByUser(user);
 
-        DashboardDTO dto = new DashboardDTO();
+                long success = generationHistoryRepository.countByUserAndStatus(
+                                user,
+                                "SUCCESS");
 
-        dto.setTotalUsers(userRepository.count());
+                long failed = generationHistoryRepository.countByUserAndStatus(
+                                user,
+                                "FAILED");
 
-        dto.setTotalAuditLogs(auditRepository.count());
+                long totalTestCases = dashboardRepository.totalTestCases(user);
 
-        dto.setTotalAiGenerations(
-                auditRepository.countByAction(
-                        AuditAction.GENERATE_TEST_CASE.name()));
+                double averageResponse = dashboardRepository.averageResponse(user);
 
-        dto.setTotalUploads(
-                auditRepository.countByAction(
-                        AuditAction.UPLOAD_TO_JIRA.name()));
+                long uploaded = generationTestCaseRepository.countUploaded();
 
-        dto.setRecentLogs(
-                auditRepository.findTop20ByOrderByTimestampDesc());
+                List<String> models = dashboardRepository.findMostUsedModels(
+                                user,
+                                PageRequest.of(0, 1));
 
-        return dto;
+                String aiModel = models.isEmpty()
+                                ? "-"
+                                : models.get(0);
 
-    }
+                double successRate = 0;
+
+                if (totalGenerations > 0) {
+
+                        successRate = ((double) success / totalGenerations) * 100;
+                }
+
+                return DashboardStatisticsResponse.builder()
+
+                                .totalGenerations(totalGenerations)
+
+                                .successfulRuns(success)
+
+                                .failedRuns(failed)
+
+                                .successRate(successRate)
+
+                                .totalTestCases(totalTestCases)
+
+                                .averageResponseTime(averageResponse)
+
+                                .uploadedToJira(uploaded)
+
+                                .mostUsedAiModel(aiModel == null ? "-" : aiModel)
+
+                                .build();
+
+        }
 
 }

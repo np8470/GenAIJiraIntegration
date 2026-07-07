@@ -52,7 +52,7 @@ dependencies {
     // -----------------------------
     // Database
     // -----------------------------
-    runtimeOnly 'com.h2database:h2'
+    //runtimeOnly 'com.h2database:h2'
 
      // PostgreSQL (Use later in Production)
     // runtimeOnly 'org.postgresql:postgresql'
@@ -123,7 +123,12 @@ dependencies {
     implementation 'org.glassfish.jersey.core:jersey-common:3.1.7'
 
 
-    
+    // PostgreSQL
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Flyway
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
     
 }
 

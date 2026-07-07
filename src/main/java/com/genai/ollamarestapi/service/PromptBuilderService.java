@@ -48,21 +48,32 @@ public class PromptBuilderService {
         4. Do NOT number test cases.
         5. Response MUST start with [
         6. Response MUST end with ]
+        7. title: Write a concise test case title.
+        8. "description": One sentence describing the test.
+        9. priority: High, Medium or Low.
+        10. steps: Array of strings.
+        11. expectedResult: Expected outcome.
+        12. Do NOT leave title empty.
+        13. Do NOT leave description empty.
+
 
         Schema
 
         [
           {
             "id":"TC_001",
-            "title":"",
-            "description":"",
+            "title":"Verify successful login with valid credentials ",
+            "description":"Verify user can login using valid username and password.",
             "priority":"High",
             "type":"Functional",
-            "precondition":"",
+            "precondition":"User exists in system.",
             "steps":[
-              ""
+              "Open Login page",
+              "Enter valid username",
+              "Enter valid password",
+              "Click Login"
             ],
-            "expectedResult":""
+            "expectedResult":"User is redirected to Dashboard."
           }
         ]
 

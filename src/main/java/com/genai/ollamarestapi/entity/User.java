@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -79,16 +81,26 @@ public class User {
     /**
      * Creation Time
      */
-    @Builder.Default
+    /*
+     * @Builder.Default
+     * 
+     * @Column(nullable = false, updatable = false)
+     * private LocalDateTime createdAt = LocalDateTime.now();
+     */
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     /**
      * Last Updated
      */
-    @Builder.Default
+    /*
+     * @Builder.Default
+     * 
+     * @Column(nullable = false)
+     * private LocalDateTime updatedAt = LocalDateTime.now();
+     */
     @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     /**
      * Last Login Time
@@ -98,12 +110,19 @@ public class User {
     /**
      * User Roles
      */
-    @Builder.Default
+        /* @Builder.Default
+        @ManyToMany(fetch = FetchType.EAGER)
+        @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+        private Set<Role> roles = new HashSet<>(); */
+
+    
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+    name = "user_roles",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id"),
+    uniqueConstraints = @UniqueConstraint(
+        columnNames = {"user_id", "role_id"})
     )
     private Set<Role> roles = new HashSet<>();
 
@@ -124,5 +143,17 @@ public class User {
     public void addRole(Role role) {
         roles.add(role);
     }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+    }
+
+    public boolean hasRole(String roleName) {
+        return roles.stream()
+            .anyMatch(r -> r.getName().equalsIgnoreCase(roleName));
+    }
+
+    @OneToMany(mappedBy = "user")
+    private List<GenerationHistory> histories = new ArrayList<>();
 
 }

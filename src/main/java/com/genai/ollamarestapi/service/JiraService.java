@@ -67,6 +67,15 @@ public class JiraService {
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(body)
         .retrieve()
+        .onStatus(
+        status -> status.isError(),
+        responses -> responses.bodyToMono(String.class)
+                .map(bodys -> {
+
+                    log.error("Jira Error Body:\n{}", bodys);
+
+                    return new RuntimeException(body);
+                }))
         .bodyToMono(String.class)
         .block();
     log.info("Jira Payload: {}", body);

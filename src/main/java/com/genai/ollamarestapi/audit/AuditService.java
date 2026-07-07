@@ -36,7 +36,7 @@ public class AuditService {
         audit.setIpAddress(ipAddress);
         audit.setUserAgent(userAgent);
         audit.setExecutionTimeMs(executionTimeMs);
-        audit.setTimestamp(LocalDateTime.now());
+        //audit.setTimestamp(LocalDateTime.now());
 
         return auditRepository.save(audit);
     }

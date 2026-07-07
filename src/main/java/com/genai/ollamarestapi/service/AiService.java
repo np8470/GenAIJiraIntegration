@@ -18,122 +18,161 @@ import java.util.List;
 @Slf4j
 public class AiService {
 
-    private final OllamaClient ollamaClient;
+        private final OllamaClient ollamaClient;
 
-    private final PromptBuilderService promptBuilderService;
+        private final PromptBuilderService promptBuilderService;
 
-    private final ResponseParser responseParser;
+        private final ResponseParser responseParser;
 
-    /**
-     * Generate Manual/API/Selenium Test Cases using Ollama.
-     */
-    @Audit(action = AuditAction.GENERATE_TEST_CASE, message = "Generated Test Cases from User Story description for generation type {1}")
-    public List<TestCase> generateTestCases(
-            String userStoryDescription,
-            GenerationType type) {
+        /**
+         * Generate Manual/API/Selenium Test Cases using Ollama.
+         */
+        @Audit(action = AuditAction.GENERATE_TEST_CASE, message = "Generated Test Cases from User Story description for generation type {1}")
+        public List<TestCase> generateTestCases(
+                        String userStoryDescription,
+                        GenerationType type) {
 
-        try {
+                try {
 
-            // Build AI Prompt
-            String prompt = promptBuilderService.buildPrompt(
-                    userStoryDescription,
-                    type);
+                        // Build AI Prompt
+                        String prompt = promptBuilderService.buildPrompt(
+                                        userStoryDescription,
+                                        type);
 
-            log.info("Calling Ollama...");
+                        log.info("Calling Ollama...");
 
-            // Call Ollama
-            OllamaResponse response = ollamaClient.generate(prompt);
+                        // Call Ollama
+                        OllamaResponse response = ollamaClient.generate(prompt);
 
-            if (response == null) {
-                throw new RuntimeException("Received null response from Ollama.");
-            }
+                        if (response == null) {
+                                throw new RuntimeException("Received null response from Ollama.");
+                        }
 
-            log.info("========================================");
-            log.info("Model              : {}", response.getModel());
-            log.info("Done               : {}", response.isDone());
-            log.info("Prompt Tokens      : {}", response.getPromptEvalCount());
-            log.info("Generated Tokens   : {}", response.getEvalCount());
-            log.info("========================================");
+                        log.info("========================================");
+                        log.info("Model              : {}", response.getModel());
+                        log.info("Done               : {}", response.isDone());
+                        log.info("Prompt Tokens      : {}", response.getPromptEvalCount());
+                        log.info("Generated Tokens   : {}", response.getEvalCount());
+                        log.info("========================================");
 
-            log.info("Raw AI Response:\n{}", response.getResponse());
+                        log.info("Raw AI Response:\n{}", response.getResponse());
 
-            // Parse JSON returned by AI
-            List<TestCase> testCases =
-                    responseParser.parse(response.getResponse());
+                        // Parse JSON returned by AI
+                        List<TestCase> testCases = responseParser.parse(response.getResponse());
 
-            log.info("Successfully parsed {} test cases.",
-                    testCases.size());
+                        for (TestCase tc : testCases) {
 
-            return testCases;
+                                if (tc.getTitle() == null || tc.getTitle().isBlank()) {
 
-        } catch (Exception ex) {
+                                        if (tc.getSteps() != null && !tc.getSteps().isEmpty()) {
 
-            log.error("Failed while generating test cases.", ex);
+                                                String firstStep = tc.getSteps().get(0);
 
-            throw new AIException(
-                    "Failed to generate test cases.",
-                    ex);
-        }
-    }
+                                                if (firstStep.length() > 70) {
+                                                        firstStep = firstStep.substring(0, 70);
+                                                }
 
-    /**
-     * Converts test cases to readable text.
-     */
-    @Audit(action = AuditAction.FORMAT_TEST_CASE, message = "Converts test cases to readable text ")
-    public String buildOutput(List<TestCase> testCases) {
+                                                tc.setTitle(firstStep);
 
-        StringBuilder sb = new StringBuilder();
+                                        } else {
 
-        for (TestCase tc : testCases) {
+                                                tc.setTitle("Generated Test Case " + tc.getId());
 
-            sb.append("====================================\n");
+                                        }
+                                }
 
-            sb.append("Test Case ID : ")
-                    .append(tc.getId())
-                    .append("\n");
+                                if (tc.getDescription() == null || tc.getDescription().isBlank()) {
 
-            sb.append("Title : ")
-                    .append(tc.getTitle())
-                    .append("\n");
+                                        tc.setDescription(tc.getTitle());
 
-            sb.append("Description : ")
-                    .append(tc.getDescription())
-                    .append("\n");
+                                }
 
-            sb.append("Priority : ")
-                    .append(tc.getPriority())
-                    .append("\n");
+                                if (tc.getPriority() == null || tc.getPriority().isBlank()) {
 
-            sb.append("Type : ")
-                    .append(tc.getType())
-                    .append("\n");
+                                        tc.setPriority("Medium");
 
-            sb.append("Precondition : ")
-                    .append(tc.getPrecondition())
-                    .append("\n");
+                                }
 
-            sb.append("Steps:\n");
+                                if (tc.getType() == null || tc.getType().isBlank()) {
 
-            if (tc.getSteps() != null) {
+                                        tc.setType("Functional");
 
-                int stepNo = 1;
+                                }
+                        }
 
-                for (String step : tc.getSteps()) {
+                        log.info("Successfully parsed {} test cases.",
+                                        testCases.size());
 
-                    sb.append(stepNo++)
-                            .append(". ")
-                            .append(step)
-                            .append("\n");
+                        return testCases;
+
+                } catch (Exception ex) {
+
+                        log.error("Failed while generating test cases.", ex);
+
+                        throw new AIException(
+                                        "Failed to generate test cases.",
+                                        ex);
                 }
-            }
-
-            sb.append("Expected Result : ")
-                    .append(tc.getExpectedResult())
-                    .append("\n");
-
-            sb.append("====================================\n\n");
         }
 
-        return sb.toString();
-    }
+        /**
+         * Converts test cases to readable text.
+         */
+        @Audit(action = AuditAction.FORMAT_TEST_CASE, message = "Converts test cases to readable text ")
+        public String buildOutput(List<TestCase> testCases) {
+
+                StringBuilder sb = new StringBuilder();
+
+                for (TestCase tc : testCases) {
+
+                        sb.append("====================================\n");
+
+                        sb.append("Test Case ID : ")
+                                        .append(tc.getId())
+                                        .append("\n");
+
+                        sb.append("Title : ")
+                                        .append(tc.getTitle())
+                                        .append("\n");
+
+                        sb.append("Description : ")
+                                        .append(tc.getDescription())
+                                        .append("\n");
+
+                        sb.append("Priority : ")
+                                        .append(tc.getPriority())
+                                        .append("\n");
+
+                        sb.append("Type : ")
+                                        .append(tc.getType())
+                                        .append("\n");
+
+                        sb.append("Precondition : ")
+                                        .append(tc.getPrecondition())
+                                        .append("\n");
+
+                        sb.append("Steps:\n");
+
+                        if (tc.getSteps() != null) {
+
+                                int stepNo = 1;
+
+                                for (String step : tc.getSteps()) {
+
+                                        sb.append(stepNo++)
+                                                        .append(". ")
+                                                        .append(step)
+                                                        .append("\n");
+                                }
+                        }
+
+                        sb.append("Expected Result : ")
+                                        .append(tc.getExpectedResult())
+                                        .append("\n");
+
+                        sb.append("====================================\n\n");
+                }
+
+                return sb.toString();
+        }
 }

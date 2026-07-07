@@ -15,13 +15,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import java.util.function.Function;
+import jakarta.annotation.PostConstruct;
 
 @Slf4j
 @Validated
 @Service
 public class JiraDataService implements Function<JiraDataService.Request, JiraDataService.Response> {
 
-    //private static final Logger log = LoggerFactory.getLogger(JiraDataService.class);
+    // private static final Logger log =
+    // LoggerFactory.getLogger(JiraDataService.class);
     private final JiraApiProperties jiraApiProperties;
     private final ObjectMapper objectMapper;
     private final WebClient webClient;
@@ -57,6 +59,24 @@ public class JiraDataService implements Function<JiraDataService.Request, JiraDa
      * }
      */
 
+    /*
+     * public JiraDataService(
+     * JiraApiProperties jiraApiProperties,
+     * WebClient jiraWebClient,
+     * ObjectMapper objectMapper) {
+     * 
+     * this.jiraApiProperties = jiraApiProperties;
+     * this.objectMapper = objectMapper;
+     * 
+     * this.webClient = jiraWebClient.mutate()
+     * .baseUrl(jiraApiProperties.getApiUrl())
+     * .defaultHeaders(headers -> headers.setBasicAuth(
+     * jiraApiProperties.getUsername(),
+     * jiraApiProperties.getApiToken()))
+     * .build();
+     * }
+     */
+
     public JiraDataService(
             JiraApiProperties jiraApiProperties,
             WebClient jiraWebClient,
@@ -64,13 +84,42 @@ public class JiraDataService implements Function<JiraDataService.Request, JiraDa
 
         this.jiraApiProperties = jiraApiProperties;
         this.objectMapper = objectMapper;
+        this.webClient = jiraWebClient;
+    }
 
-        this.webClient = jiraWebClient.mutate()
-                .baseUrl(jiraApiProperties.getApiUrl())
-                .defaultHeaders(headers -> headers.setBasicAuth(
-                        jiraApiProperties.getUsername(),
-                        jiraApiProperties.getApiToken()))
-                .build();
+    @PostConstruct
+    public void verify() {
+
+        log.info("=========== JIRA CONFIGURATION ===========");
+        log.info("Jira URL      : {}", jiraApiProperties.getApiUrl());
+        log.info("Jira Username : {}", jiraApiProperties.getUsername());
+
+        String token = jiraApiProperties.getApiToken();
+
+        log.info("Token present : {}", token != null);
+        log.info("Token length  : {}", token == null ? 0 : token.length());
+        log.info("Actual token loaded: {}", token);
+
+        log.info("==========================================");
+    }
+
+    @PostConstruct
+    public void verifyLogin() {
+
+        try {
+
+            String myself = webClient.get()
+                    .uri("/rest/api/2/myself")
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            log.info("Logged in as:");
+            log.info(myself);
+
+        } catch (Exception e) {
+            log.error("Unable to call /myself", e);
+        }
     }
 
     @Override
@@ -79,6 +128,13 @@ public class JiraDataService implements Function<JiraDataService.Request, JiraDa
             log.info("Fetching details for story: {}", request.storyKey());
 
             String issueEndpoint = "/rest/api/2/issue/" + request.storyKey();
+
+            log.info("Calling URL: {}{}",
+                    jiraApiProperties.getApiUrl(),
+                    issueEndpoint);
+
+            log.info("Username being used: {}",
+                    jiraApiProperties.getUsername());
 
             String jsonResponse = webClient.get()
                     .uri(issueEndpoint)

@@ -15,12 +15,16 @@ import com.genai.ollamarestapi.model.GenerationType;
 import com.genai.ollamarestapi.model.UploadResponse;
 import com.genai.ollamarestapi.model.ai.TestCase;
 import com.genai.ollamarestapi.model.jira.JiraApiProperties;
+import com.genai.ollamarestapi.repository.GenerationHistoryRepository;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import com.genai.ollamarestapi.entity.GenerationHistory;
+import com.genai.ollamarestapi.entity.GenerationTestCase;
+import com.genai.ollamarestapi.entity.User;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +35,8 @@ public class TestCaseOrchestratorService {
         private final AiService aiService;
         private final JiraService jiraService;
         private final JiraApiProperties jiraApiProperties;
+        private final GenerationHistoryService generationHistoryService;
+        private final UserService userService;
 
         @Retry(name = "ollamaRetry", fallbackMethod = "ollamaFallback")
         @CircuitBreaker(name = "ollamaCircuit", fallbackMethod = "ollamaFallback")
@@ -39,8 +45,10 @@ public class TestCaseOrchestratorService {
                         String storyKey,
                         GenerationType type,
                         HttpSession session) {
-                //System.out.println("Inside generateOnly()");
-                 log.info("Inside generateOnly()");
+                // System.out.println("Inside generateOnly()");
+                log.info("Inside generateOnly()");
+                long start = System.currentTimeMillis();
+
                 try {
 
                         JiraDataService.Response story = jiraDataService.apply(
@@ -49,6 +57,19 @@ public class TestCaseOrchestratorService {
                         List<TestCase> testCases = aiService.generateTestCases(
                                         story.acceptanceCriteria(),
                                         type);
+
+                        // added
+                        long end = System.currentTimeMillis();
+
+                        User user = userService.getCurrentUser();
+
+                        generationHistoryService.saveGeneration(
+                                        user,
+                                        storyKey,
+                                        story.acceptanceCriteria(),
+                                        type,
+                                        testCases,
+                                        end - start);
 
                         session.setAttribute("storyKey", storyKey);
                         session.setAttribute("generationType", type);
@@ -65,9 +86,26 @@ public class TestCaseOrchestratorService {
 
                         return response;
                 } catch (WebClientResponseException.NotFound ex) {
-                        log.warn("Issue not found: {}", storyKey);
-                        throw new JiraException("Issue not found: " + storyKey);
+
+                        generationHistoryService.saveFailure(
+                                        userService.getCurrentUser(),
+                                        storyKey,
+                                        System.currentTimeMillis() - start);
+
+                        throw new JiraException(
+                                        "Issue not found : " + storyKey);
+
+                } catch (Exception ex) {
+
+                        generationHistoryService.saveFailure(
+                                        userService.getCurrentUser(),
+                                        storyKey,
+                                        System.currentTimeMillis() - start);
+
+                        throw ex;
+
                 }
+
         }
 
         @Audit(action = AuditAction.UPLOAD_SELECTED_TO_JIRA, message = "Upload number of selected testcases {0} to Jira")
@@ -111,20 +149,37 @@ public class TestCaseOrchestratorService {
 
                                 uploadedCount++;
 
-                                String jiraLink = "https://genaiauto.atlassian.net/browse/" + testCaseKey;
-
-                                jiraLinks.add(jiraLink);
-
-                                log.info("Uploaded Test Case : {}", testCaseKey);
+                                /*
+                                 * String jiraLink = "https://genaiauto.atlassian.net/browse/" + testCaseKey;
+                                 * 
+                                 * jiraLinks.add(jiraLink);
+                                 * 
+                                 * log.info("Uploaded Test Case : {}", testCaseKey);
+                                 */
 
                         } catch (Exception ex) {
 
                                 failedCount++;
 
-                                log.error(
-                                                "Failed to upload test case : {}",
-                                                testCases.get(index).getTitle(),
-                                                ex);
+                                /*
+                                 * log.error(
+                                 * "Failed to upload test case : {}",
+                                 * testCases.get(index).getTitle(),
+                                 * ex);
+                                 */
+                                log.error("Upload failed");
+
+                                if (ex instanceof WebClientResponseException e) {
+
+                                        log.error("Status = {}", e.getStatusCode());
+
+                                        log.error("Body = {}", e.getResponseBodyAsString());
+
+                                } else {
+
+                                        log.error("Exception", ex);
+
+                                }
                         }
 
                 }
@@ -212,8 +267,10 @@ public class TestCaseOrchestratorService {
                 for (TestCase tc : testCases) {
                         log.info("Parsed Test Case: {}", tc);
 
-                        /* System.out.println("Steps = " + tc.getSteps());
-                        System.out.println("Expected = " + tc.getExpectedResult()); */
+                        /*
+                         * System.out.println("Steps = " + tc.getSteps());
+                         * System.out.println("Expected = " + tc.getExpectedResult());
+                         */
                         log.info("Steps {}", tc.getSteps());
                         log.info("Expected {}", tc.getExpectedResult());
                         String testCaseKey = jiraService.createTestCase(
