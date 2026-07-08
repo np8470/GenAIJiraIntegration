@@ -89,73 +89,46 @@ function renderTestCases(testCases) {
 
     let html = "";
 
-    /* ------------------------------------------
-       Select All Checkbox
-    ------------------------------------------- */
-
     html += `
-        <div class="mb-3">
-
-            <input
-                type="checkbox"
-                id="selectAll"
-                checked
-                onchange="toggleAll(this)">
-
-            <label for="selectAll">
-
-                <b>Select All</b>
-
-            </label>
-
-        </div>
+    <div class="mb-3">
+        <input
+            type="checkbox"
+            id="selectAll"
+            checked
+            onchange="toggleAll(this)">
+        <label for="selectAll">
+            <b>Select All</b>
+        </label>
+    </div>
     `;
-
-
-    /* ------------------------------------------
-       Test Case Cards
-    ------------------------------------------- */
 
     testCases.forEach((tc, index) => {
 
         html += `
 
-<div
-    class="accordion-item testcase-item"
-
-    data-title="${(tc.title || "").toLowerCase()}"
-
-    data-description="${(tc.description || "").toLowerCase()}"
-
-    data-priority="${tc.priority}">
+<div class="accordion-item testcase-item"
+     data-index="${index}"
+     data-title="${(tc.title || "").toLowerCase()}"
+     data-description="${(tc.description || "").toLowerCase()}"
+     data-priority="${tc.priority}">
 
     <h2 class="accordion-header">
 
-        <button
-
-            class="accordion-button collapsed"
-
-            type="button"
-
-            data-bs-toggle="collapse"
-
-            data-bs-target="#tc${index}">
+        <button class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#tc${index}">
 
             <input
-
                 class="form-check-input me-3 testcaseCheckbox"
-
                 type="checkbox"
-
                 checked
-
                 value="${index}"
-
                 onclick="event.stopPropagation()">
 
-            <span class="fw-semibold">
+            <span class="fw-bold">
 
-                ${tc.title}
+                ${tc.id}
 
             </span>
 
@@ -163,75 +136,165 @@ function renderTestCases(testCases) {
 
     </h2>
 
-    <div
-
-        id="tc${index}"
-
-        class="accordion-collapse collapse"
-
-        data-bs-parent="">
+    <div id="tc${index}"
+         class="accordion-collapse collapse">
 
         <div class="accordion-body">
 
-            <p>
+            <div class="mb-3">
 
-                <b>Description</b>
+                <label class="form-label fw-bold">
 
-                <br>
+                    Title
 
-                ${tc.description}
+                </label>
 
-            </p>
+                <input
+                    class="form-control tc-title"
+                    value="${tc.title || ""}">
 
-            <p>
+            </div>
 
-                <b>Priority :</b>
+            <div class="mb-3">
 
-                <span class="badge ${priorityBadge(tc.priority)}">
+                <label class="form-label fw-bold">
 
-                    ${tc.priority}
+                    Description
 
-                </span>
+                </label>
 
-            </p>
+                <textarea
+                    class="form-control tc-description"
+                    rows="2">${tc.description || ""}</textarea>
 
-            <p>
+            </div>
 
-                <b>Type :</b>
+            <div class="row">
 
-                ${tc.type}
+                <div class="col-md-6">
 
-            </p>
+                    <label class="form-label fw-bold">
 
-            <p>
+                        Priority
 
-                <b>Precondition</b>
+                    </label>
 
-                <br>
+                    <select class="form-select tc-priority">
 
-                ${tc.precondition}
+                        <option value="High" ${tc.priority == "High" ? "selected" : ""}>High</option>
 
-            </p>
+                        <option value="Medium" ${tc.priority == "Medium" ? "selected" : ""}>Medium</option>
 
-            <b>Steps</b>
+                        <option value="Low" ${tc.priority == "Low" ? "selected" : ""}>Low</option>
 
-            <ol>
-                        ${(tc.steps || [])
-                .map(step => `<li>${step}</li>`)
-                .join("")
-            }
+                    </select>
 
-            </ol>
+                </div>
 
-            <p>
+                <div class="col-md-6">
 
-                <b>Expected Result</b>
+                    <label class="form-label fw-bold">
 
-                <br>
+                        Type
 
-                ${tc.expectedResult}
+                    </label>
 
-            </p>
+                    <input
+                        class="form-control tc-type"
+                        value="${tc.type || ""}">
+
+                </div>
+
+            </div>
+
+            <div class="mt-3">
+
+                <label class="form-label fw-bold">
+
+                    Precondition
+
+                </label>
+
+                <textarea
+                    class="form-control tc-precondition"
+                    rows="2">${tc.precondition || ""}</textarea>
+
+            </div>
+
+            <div class="mt-3">
+
+                <label class="form-label fw-bold">
+
+                    Steps
+
+                </label>
+
+                <div class="stepsContainer">
+
+    ${(tc.steps || [])
+                .map(step => `
+            <div class="input-group mb-2 step-row">
+
+    <span
+        class="input-group-text dragHandle"
+        title="Drag to reorder">
+
+        ☰
+
+    </span>
+
+    <input
+        type="text"
+        class="form-control tc-step"
+        value="${step}">
+
+    <button
+        class="btn btn-outline-danger removeStepBtn"
+        type="button">
+
+        Remove
+
+    </button>
+
+</div>
+        `)
+                .join("")}
+
+</div>
+
+                <button
+                    class="btn btn-outline-primary btn-sm mt-2 addStepBtn">
+
+                    + Add Step
+
+                </button>
+
+            </div>
+
+            <div class="mt-3">
+
+                <label class="form-label fw-bold">
+
+                    Expected Result
+
+                </label>
+
+                <textarea
+                    class="form-control tc-expected"
+                    rows="3">${tc.expectedResult || ""}</textarea>
+
+            </div>
+
+            <div class="mt-4">
+
+                <button
+                    class="btn btn-success saveTestCaseBtn">
+
+                    Save Changes
+
+                </button>
+
+            </div>
 
         </div>
 
@@ -240,9 +303,11 @@ function renderTestCases(testCases) {
 </div>
 
 `;
+
     });
 
     document.getElementById("resultContainer").innerHTML = html;
+    initializeSortable();
 
     document.getElementById("searchCount").innerHTML =
         testCases.length + " Test Cases";
@@ -251,6 +316,7 @@ function renderTestCases(testCases) {
         "inline-block";
 
 }
+
 
 /**
  * Selects or deselects all generated test cases.
@@ -437,6 +503,122 @@ function collapseAll() {
                 bootstrap.Collapse.getOrCreateInstance(item);
 
             collapse.hide();
+
+        });
+
+}
+
+document.addEventListener("click", function (e) {
+
+    if (!e.target.classList.contains("saveTestCaseBtn"))
+        return;
+
+    const card = e.target.closest(".testcase-item");
+
+    const index = card.dataset.index;
+
+    const tc = generatedTestCases[index];
+
+    tc.title = card.querySelector(".tc-title").value;
+
+    tc.description = card.querySelector(".tc-description").value;
+
+    tc.priority = card.querySelector(".tc-priority").value;
+
+    tc.type = card.querySelector(".tc-type").value;
+
+    tc.precondition = card.querySelector(".tc-precondition").value;
+
+    tc.expectedResult = card.querySelector(".tc-expected").value;
+
+    tc.steps = [];
+
+    card.querySelectorAll(".tc-step").forEach(step => {
+
+        tc.steps.push(step.value);
+
+    });
+
+    showToast("Changes saved.");
+
+});
+
+document.addEventListener("click", function (e) {
+
+    if (!e.target.classList.contains("addStepBtn"))
+        return;
+
+    const container =
+        e.target.parentElement.querySelector(".stepsContainer");
+
+    container.insertAdjacentHTML(
+    "beforeend",
+    `
+    <div class="input-group mb-2 step-row">
+
+        <span
+            class="input-group-text dragHandle">
+
+            ☰
+
+        </span>
+
+        <input
+            type="text"
+            class="form-control tc-step"
+            placeholder="Enter Step">
+
+        <button
+            class="btn btn-outline-danger removeStepBtn"
+            type="button">
+
+            Remove
+
+        </button>
+
+    </div>
+`
+);
+
+initializeSortable();
+
+});
+
+document.addEventListener("click", function (e) {
+
+    if (!e.target.classList.contains("removeStepBtn"))
+        return;
+
+    const row = e.target.closest(".input-group");
+
+    if (row) {
+        row.remove();
+    }
+
+});
+
+function initializeSortable() {
+
+    document
+        .querySelectorAll(".stepsContainer")
+        .forEach(container => {
+
+            if (container.dataset.sortable)
+                return;
+
+            Sortable.create(container, {
+
+                animation: 200,
+
+                handle: ".dragHandle",
+
+                ghostClass: "dragging",
+
+                draggable: ".step-row"
+
+            });
+
+            container.dataset.sortable = "true";
 
         });
 

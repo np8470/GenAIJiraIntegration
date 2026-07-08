@@ -137,6 +137,20 @@ public class TestCaseOrchestratorService {
 
                         try {
 
+                                /*
+                                 * TestCase tc = testCases.get(index);
+                                 * 
+                                 * String testCaseKey = jiraService.createTestCase(
+                                 * "SCRUM",
+                                 * tc);
+                                 * 
+                                 * jiraService.linkIssue(
+                                 * storyKey,
+                                 * testCaseKey);
+                                 * 
+                                 * uploadedCount++;
+                                 */
+
                                 TestCase tc = testCases.get(index);
 
                                 String testCaseKey = jiraService.createTestCase(
@@ -148,6 +162,12 @@ public class TestCaseOrchestratorService {
                                                 testCaseKey);
 
                                 uploadedCount++;
+
+                                String jiraLink = jiraService.getBrowseUrl(testCaseKey);
+
+                                jiraLinks.add(jiraLink);
+
+                                log.info("Uploaded Test Case : {}", jiraLink);
 
                                 /*
                                  * String jiraLink = "https://genaiauto.atlassian.net/browse/" + testCaseKey;
@@ -184,7 +204,7 @@ public class TestCaseOrchestratorService {
 
                 }
 
-                boolean success = failedCount == 0;
+                boolean success = uploadedCount > 0;
 
                 String message = uploadedCount + " of "
                                 + selectedIndexes.size()
