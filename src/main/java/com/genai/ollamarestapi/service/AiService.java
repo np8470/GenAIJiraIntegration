@@ -175,4 +175,66 @@ public class AiService {
 
                 return sb.toString();
         }
+
+        @Audit(action = AuditAction.REGENERATE_TEST_CASE, message = "Regenerated AI Test Case {0}")
+        public TestCase regenerateTestCase(TestCase testCase) {
+
+                try {
+
+                        String prompt = promptBuilderService
+                                        .buildRegeneratePrompt(testCase);
+
+                        log.info("Regenerating Test Case using Ollama...");
+
+                        OllamaResponse response = ollamaClient.generate(prompt);
+
+                        if (response == null) {
+
+                                throw new RuntimeException(
+                                                "Received null response from Ollama.");
+
+                        }
+
+                        List<TestCase> regenerated = responseParser.parse(response.getResponse());
+
+                        if (regenerated.isEmpty()) {
+
+                                throw new RuntimeException(
+                                                "No regenerated test case returned.");
+
+                        }
+
+                        TestCase tc = regenerated.get(0);
+
+                        if (tc.getPriority() == null || tc.getPriority().isBlank()) {
+
+                                tc.setPriority("Medium");
+
+                        }
+
+                        if (tc.getType() == null || tc.getType().isBlank()) {
+
+                                tc.setType("Functional");
+
+                        }
+
+                        if (tc.getDescription() == null || tc.getDescription().isBlank()) {
+
+                                tc.setDescription(tc.getTitle());
+
+                        }
+
+                        return tc;
+
+                } catch (Exception ex) {
+
+                        log.error("Failed to regenerate test case.", ex);
+
+                        throw new AIException(
+                                        "Failed to regenerate test case.",
+                                        ex);
+
+                }
+
+        }
 }

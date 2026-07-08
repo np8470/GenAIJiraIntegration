@@ -5,6 +5,8 @@ import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.model.GenerateResponse;
 import com.genai.ollamarestapi.model.GenerationType;
 import com.genai.ollamarestapi.model.UploadResponse;
+import com.genai.ollamarestapi.model.ai.TestCase;
+import com.genai.ollamarestapi.service.AiService;
 import com.genai.ollamarestapi.service.TestCaseOrchestratorService;
 
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class GenerationController {
 
     private final TestCaseOrchestratorService service;
+    private final AiService aiService;
 
     @GetMapping("/generate")
     @Audit(action = AuditAction.GENERATE_TEST_CASE, message = "Generated AI Test Cases for Work Item {0} using type {1}")
@@ -37,13 +40,25 @@ public class GenerationController {
                 session);
     }
 
+
     @PostMapping("/upload")
-    @Audit(action = AuditAction.UPLOAD_TO_JIRA, message = "Uploaded {0} Test Cases to Jira")
-    public UploadResponse uploadToJira(@RequestBody List<Integer> selectedIndexes, HttpSession session) {
-        log.info("Upload testcases to Jira {}", selectedIndexes);
+    @Audit(action = AuditAction.UPLOAD_TO_JIRA, message = "Uploaded Test Cases to Jira")
+    public UploadResponse uploadToJira(
+            @RequestBody List<TestCase> testCases,
+            HttpSession session) {
+
+        log.info("Uploading {} test cases", testCases.size());
+
         return service.uploadSelectedToJira(
-                selectedIndexes,
+                testCases,
                 session);
     }
 
+    @PostMapping("/regenerate")
+    public TestCase regenerate(
+            @RequestBody TestCase testCase) {
+
+        return aiService.regenerateTestCase(testCase);
+
+    }
 }

@@ -15,15 +15,12 @@ import com.genai.ollamarestapi.model.GenerationType;
 import com.genai.ollamarestapi.model.UploadResponse;
 import com.genai.ollamarestapi.model.ai.TestCase;
 import com.genai.ollamarestapi.model.jira.JiraApiProperties;
-import com.genai.ollamarestapi.repository.GenerationHistoryRepository;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import com.genai.ollamarestapi.entity.GenerationHistory;
-import com.genai.ollamarestapi.entity.GenerationTestCase;
 import com.genai.ollamarestapi.entity.User;
 
 @Service
@@ -111,21 +108,31 @@ public class TestCaseOrchestratorService {
         @Audit(action = AuditAction.UPLOAD_SELECTED_TO_JIRA, message = "Upload number of selected testcases {0} to Jira")
         @SuppressWarnings("unchecked")
         public UploadResponse uploadSelectedToJira(
-                        List<Integer> selectedIndexes,
+                        List<TestCase> testCases,
                         HttpSession session) {
 
                 String storyKey = (String) session.getAttribute("storyKey");
 
-                List<TestCase> testCases = (List<TestCase>) session.getAttribute("generatedTestCases");
-
-                if (storyKey == null || testCases == null) {
+                if (storyKey == null) {
 
                         return new UploadResponse(
                                         false,
-                                        "Please generate test cases first.",
+                                        "Story Key not found.",
                                         0,
                                         0,
                                         List.of());
+
+                }
+
+                if (testCases == null || testCases.isEmpty()) {
+
+                        return new UploadResponse(
+                                        false,
+                                        "No test cases received.",
+                                        0,
+                                        0,
+                                        List.of());
+
                 }
 
                 int uploadedCount = 0;
@@ -133,26 +140,9 @@ public class TestCaseOrchestratorService {
 
                 List<String> jiraLinks = new ArrayList<>();
 
-                for (Integer index : selectedIndexes) {
+                for (TestCase tc : testCases) {
 
                         try {
-
-                                /*
-                                 * TestCase tc = testCases.get(index);
-                                 * 
-                                 * String testCaseKey = jiraService.createTestCase(
-                                 * "SCRUM",
-                                 * tc);
-                                 * 
-                                 * jiraService.linkIssue(
-                                 * storyKey,
-                                 * testCaseKey);
-                                 * 
-                                 * uploadedCount++;
-                                 */
-
-                                TestCase tc = testCases.get(index);
-
                                 String testCaseKey = jiraService.createTestCase(
                                                 "SCRUM",
                                                 tc);
@@ -168,25 +158,12 @@ public class TestCaseOrchestratorService {
                                 jiraLinks.add(jiraLink);
 
                                 log.info("Uploaded Test Case : {}", jiraLink);
-
-                                /*
-                                 * String jiraLink = "https://genaiauto.atlassian.net/browse/" + testCaseKey;
-                                 * 
-                                 * jiraLinks.add(jiraLink);
-                                 * 
-                                 * log.info("Uploaded Test Case : {}", testCaseKey);
-                                 */
+                               
 
                         } catch (Exception ex) {
 
                                 failedCount++;
-
-                                /*
-                                 * log.error(
-                                 * "Failed to upload test case : {}",
-                                 * testCases.get(index).getTitle(),
-                                 * ex);
-                                 */
+                                
                                 log.error("Upload failed");
 
                                 if (ex instanceof WebClientResponseException e) {
@@ -207,7 +184,7 @@ public class TestCaseOrchestratorService {
                 boolean success = uploadedCount > 0;
 
                 String message = uploadedCount + " of "
-                                + selectedIndexes.size()
+                                + testCases.size()
                                 + " test case(s) uploaded successfully.";
 
                 return new UploadResponse(
@@ -287,10 +264,6 @@ public class TestCaseOrchestratorService {
                 for (TestCase tc : testCases) {
                         log.info("Parsed Test Case: {}", tc);
 
-                        /*
-                         * System.out.println("Steps = " + tc.getSteps());
-                         * System.out.println("Expected = " + tc.getExpectedResult());
-                         */
                         log.info("Steps {}", tc.getSteps());
                         log.info("Expected {}", tc.getExpectedResult());
                         String testCaseKey = jiraService.createTestCase(

@@ -287,12 +287,24 @@ function renderTestCases(testCases) {
 
             <div class="mt-4">
 
-                <button
-                    class="btn btn-success saveTestCaseBtn">
+               <div class="d-flex gap-2 mt-4">
 
-                    Save Changes
+    <button
+        class="btn btn-success saveTestCaseBtn">
 
-                </button>
+        Save Changes
+
+    </button>
+
+    <button
+        class="btn btn-warning regenerateBtn"
+        data-index="${index}">
+
+        🔄 Regenerate
+
+    </button>
+
+</div>
 
             </div>
 
@@ -321,7 +333,7 @@ function renderTestCases(testCases) {
 /**
  * Selects or deselects all generated test cases.
  */
-function toggleAll(selectAll) {
+/* function toggleAll(selectAll) {
 
     document
         .querySelectorAll(".testcaseCheckbox")
@@ -331,12 +343,12 @@ function toggleAll(selectAll) {
 
         });
 
-}
+} */
 
 /**
  * Filters the generated test cases based on the search text.
  */
-function filterTestCases() {
+/* function filterTestCases() {
 
     const keyword = document
         .getElementById("searchBox")
@@ -375,13 +387,13 @@ function filterTestCases() {
     document.getElementById("searchCount").innerHTML =
         visible + " Test Case(s)";
 
-}
+} */
 
 /**
  * Returns a numeric value for priority sorting.
  * Lower number = higher priority.
  */
-function priorityValue(priority) {
+/* function priorityValue(priority) {
 
     if (!priority) {
         return 99;
@@ -402,13 +414,13 @@ function priorityValue(priority) {
             return 99;
     }
 
-}
+} */
 
 
 /**
  * Returns the Bootstrap badge class for a priority.
  */
-function priorityBadge(priority) {
+/* function priorityBadge(priority) {
 
     if (!priority) {
         return "bg-secondary";
@@ -429,13 +441,13 @@ function priorityBadge(priority) {
             return "bg-secondary";
     }
 
-}
+} */
 
 
 /**
  * Sorts generated test cases by priority.
  */
-function sortTestCases() {
+/* function sortTestCases() {
 
     const option =
         document.getElementById("prioritySort").value;
@@ -469,12 +481,12 @@ function sortTestCases() {
 
     renderTestCases(sorted);
 
-}
+} */
 
 /**
  * Expands all generated test case accordions.
  */
-function expandAll() {
+/* function expandAll() {
 
     document
         .querySelectorAll(".accordion-collapse")
@@ -487,13 +499,13 @@ function expandAll() {
 
         });
 
-}
+} */
 
 
 /**
  * Collapses all generated test case accordions.
  */
-function collapseAll() {
+/* function collapseAll() {
 
     document
         .querySelectorAll(".accordion-collapse")
@@ -506,9 +518,9 @@ function collapseAll() {
 
         });
 
-}
+} */
 
-document.addEventListener("click", function (e) {
+/* document.addEventListener("click", function (e) {
 
     if (!e.target.classList.contains("saveTestCaseBtn"))
         return;
@@ -541,9 +553,21 @@ document.addEventListener("click", function (e) {
 
     showToast("Changes saved.");
 
-});
+}); */
+/* document.addEventListener("click", function (e) {
 
-document.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("saveTestCaseBtn"))
+        return;
+
+    const card = e.target.closest(".testcase-item");
+
+    updateGeneratedTestCase(card);
+
+    showToast("Changes saved.");
+
+}); */
+
+/* document.addEventListener("click", function (e) {
 
     if (!e.target.classList.contains("addStepBtn"))
         return;
@@ -552,8 +576,8 @@ document.addEventListener("click", function (e) {
         e.target.parentElement.querySelector(".stepsContainer");
 
     container.insertAdjacentHTML(
-    "beforeend",
-    `
+        "beforeend",
+        `
     <div class="input-group mb-2 step-row">
 
         <span
@@ -578,9 +602,12 @@ document.addEventListener("click", function (e) {
 
     </div>
 `
-);
+    );
 
-initializeSortable();
+    initializeSortable();
+    updateGeneratedTestCase(
+    e.target.closest(".testcase-item")
+);
 
 });
 
@@ -592,12 +619,18 @@ document.addEventListener("click", function (e) {
     const row = e.target.closest(".input-group");
 
     if (row) {
-        row.remove();
-    }
 
-});
+    row.remove();
 
-function initializeSortable() {
+    updateGeneratedTestCase(
+        e.target.closest(".testcase-item")
+    );
+
+}
+
+}); */
+
+/* function initializeSortable() {
 
     document
         .querySelectorAll(".stepsContainer")
@@ -608,18 +641,112 @@ function initializeSortable() {
 
             Sortable.create(container, {
 
-                animation: 200,
+    animation: 200,
 
-                handle: ".dragHandle",
+    handle: ".dragHandle",
 
-                ghostClass: "dragging",
+    ghostClass: "dragging",
 
-                draggable: ".step-row"
+    draggable: ".step-row",
 
-            });
+    onEnd: function () {
+
+        updateGeneratedTestCase(
+            container.closest(".testcase-item")
+        );
+
+    }
+
+});
 
             container.dataset.sortable = "true";
 
         });
 
-}
+} */
+
+/* document.addEventListener("click", async function (e) {
+
+    if (!e.target.classList.contains("regenerateBtn"))
+        return;
+
+    const index = e.target.dataset.index;
+
+    const tc = generatedTestCases[index];
+
+    e.target.disabled = true;
+
+    e.target.innerHTML = "Generating...";
+
+    try {
+
+        const regenerated = await postJson(
+            "/api/v1/regenerate",
+            tc
+        );
+
+        generatedTestCases[index] = regenerated;
+
+        renderTestCases(generatedTestCases);
+
+        showToast("Test Case regenerated successfully.");
+
+    }
+    catch (err) {
+
+        showToast(err.message, "danger");
+
+    }
+    finally {
+
+        e.target.disabled = false;
+
+        e.target.innerHTML = "🔄 Regenerate";
+
+    }
+
+}); */
+
+/* function updateGeneratedTestCase(card) {
+
+    const index = parseInt(card.dataset.index);
+
+    const tc = generatedTestCases[index];
+
+    tc.title = card.querySelector(".tc-title").value;
+
+    tc.description =
+        card.querySelector(".tc-description").value;
+
+    tc.priority =
+        card.querySelector(".tc-priority").value;
+
+    tc.type =
+        card.querySelector(".tc-type").value;
+
+    tc.precondition =
+        card.querySelector(".tc-precondition").value;
+
+    tc.expectedResult =
+        card.querySelector(".tc-expected").value;
+
+    tc.steps = [];
+
+    card.querySelectorAll(".tc-step").forEach(step => {
+
+        tc.steps.push(step.value);
+
+    });
+
+} */
+
+/* document.addEventListener("input", function (e) {
+
+    const card = e.target.closest(".testcase-item");
+
+    if (!card)
+        return;
+
+    updateGeneratedTestCase(card);
+
+}); */

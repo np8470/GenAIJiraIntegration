@@ -5,18 +5,19 @@ import org.springframework.stereotype.Service;
 import com.genai.ollamarestapi.audit.Audit;
 import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.model.GenerationType;
+import com.genai.ollamarestapi.model.ai.TestCase;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class PromptBuilderService {
-  
+
   @Audit(action = AuditAction.BUILD_PROMPT, message = "Build prompt for Work Item id {0} and Generation Type {1}")
   public String buildPrompt(
       String story,
       GenerationType type) {
-    log.info("Build Prompt for Work Item id and Generation Type {} -> {}",story, type);
+    log.info("Build Prompt for Work Item id and Generation Type {} -> {}", story, type);
     return switch (type) {
 
       case TEST_CASES ->
@@ -208,6 +209,53 @@ public class PromptBuilderService {
 
         %s
         """.formatted(story);
+
+  }
+
+  public String buildRegeneratePrompt(TestCase tc) {
+
+    return """
+        You are a Senior QA Engineer.
+
+        Improve ONLY this single test case.
+
+        Return ONLY one JSON object.
+
+        Current Test Case
+
+        ID:
+        %s
+
+        Title:
+        %s
+
+        Description:
+        %s
+
+        Priority:
+        %s
+
+        Type:
+        %s
+
+        Precondition:
+        %s
+
+        Steps:
+        %s
+
+        Expected Result:
+        %s
+        """
+        .formatted(
+            tc.getId(),
+            tc.getTitle(),
+            tc.getDescription(),
+            tc.getPriority(),
+            tc.getType(),
+            tc.getPrecondition(),
+            String.join("\n", tc.getSteps()),
+            tc.getExpectedResult());
 
   }
 
