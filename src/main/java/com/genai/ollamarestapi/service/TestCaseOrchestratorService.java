@@ -5,18 +5,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-
 import com.genai.ollamarestapi.audit.Audit;
 import com.genai.ollamarestapi.audit.AuditAction;
 import com.genai.ollamarestapi.exception.AIException;
 import com.genai.ollamarestapi.exception.JiraException;
 import com.genai.ollamarestapi.model.GenerateResponse;
 import com.genai.ollamarestapi.model.GenerationType;
+import com.genai.ollamarestapi.model.UploadRequest;
 import com.genai.ollamarestapi.model.UploadResponse;
 import com.genai.ollamarestapi.model.ai.TestCase;
 import com.genai.ollamarestapi.model.jira.JiraApiProperties;
-
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -40,10 +38,8 @@ public class TestCaseOrchestratorService {
         @Audit(action = AuditAction.GENERATE_RESPONSE, message = "Generate response from Work Item id {0} for Generation type {1}")
         public GenerateResponse generateOnly(
                         String storyKey,
-                        GenerationType type,
-                        HttpSession session) {
-                // System.out.println("Inside generateOnly()");
-                log.info("Inside generateOnly()");
+                        GenerationType type) {
+
                 long start = System.currentTimeMillis();
 
                 try {
@@ -55,7 +51,6 @@ public class TestCaseOrchestratorService {
                                         story.acceptanceCriteria(),
                                         type);
 
-                        // added
                         long end = System.currentTimeMillis();
 
                         User user = userService.getCurrentUser();
@@ -68,10 +63,6 @@ public class TestCaseOrchestratorService {
                                         testCases,
                                         end - start);
 
-                        session.setAttribute("storyKey", storyKey);
-                        session.setAttribute("generationType", type);
-                        //session.setAttribute("generatedTestCases", testCases);
-
                         String output = aiService.buildOutput(testCases);
 
                         GenerateResponse response = new GenerateResponse();
@@ -82,6 +73,7 @@ public class TestCaseOrchestratorService {
                         response.setTestCases(testCases);
 
                         return response;
+
                 } catch (WebClientResponseException.NotFound ex) {
 
                         generationHistoryService.saveFailure(
@@ -100,26 +92,30 @@ public class TestCaseOrchestratorService {
                                         System.currentTimeMillis() - start);
 
                         throw ex;
-
                 }
-
         }
 
         @Audit(action = AuditAction.UPLOAD_SELECTED_TO_JIRA, message = "Upload number of selected testcases {0} to Jira")
         @SuppressWarnings("unchecked")
         public UploadResponse uploadSelectedToJira(
-                        List<TestCase> testCases,
-                        HttpSession session) {
+                        UploadRequest request) {
 
-                String storyKey = (String) session.getAttribute("storyKey");
+                // String storyKey = (String) session.getAttribute("storyKey");
+                String storyKey = request.getStoryKey();
 
-                if (storyKey == null) {
+                List<TestCase> testCases = request.getTestCases();
+                if (storyKey == null || storyKey.isBlank()) {
 
                         return new UploadResponse(
+
                                         false,
-                                        "Story Key not found.",
+
+                                        "Story Key is required.",
+
                                         0,
+
                                         0,
+
                                         List.of());
 
                 }
@@ -127,10 +123,15 @@ public class TestCaseOrchestratorService {
                 if (testCases == null || testCases.isEmpty()) {
 
                         return new UploadResponse(
+
                                         false,
-                                        "No test cases received.",
+
+                                        "No test cases selected.",
+
                                         0,
+
                                         0,
+
                                         List.of());
 
                 }
@@ -158,12 +159,11 @@ public class TestCaseOrchestratorService {
                                 jiraLinks.add(jiraLink);
 
                                 log.info("Uploaded Test Case : {}", jiraLink);
-                               
 
                         } catch (Exception ex) {
 
                                 failedCount++;
-                                
+
                                 log.error("Upload failed");
 
                                 if (ex instanceof WebClientResponseException e) {
@@ -198,7 +198,6 @@ public class TestCaseOrchestratorService {
         public GenerateResponse ollamaFallback(
                         String storyKey,
                         GenerationType type,
-                        HttpSession session,
                         Exception ex) {
 
                 throw new AIException(

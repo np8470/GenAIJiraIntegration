@@ -43,12 +43,25 @@ async function uploadToJira() {
         const selectedTestCases = [];
 
         selected.forEach(index => {
+
             selectedTestCases.push(generatedTestCases[index]);
+
         });
 
+        const request = {
+
+            storyKey: document.getElementById("storyKey").value.trim(),
+
+            testCases: selectedTestCases
+
+        };
+
         const result = await postJson(
+
             "/api/v1/upload",
-            selectedTestCases
+
+            request
+
         );
 
         updateProgress(60);
