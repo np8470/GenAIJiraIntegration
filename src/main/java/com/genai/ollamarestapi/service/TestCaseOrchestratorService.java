@@ -70,7 +70,7 @@ public class TestCaseOrchestratorService {
 
                         session.setAttribute("storyKey", storyKey);
                         session.setAttribute("generationType", type);
-                        session.setAttribute("generatedTestCases", testCases);
+                        //session.setAttribute("generatedTestCases", testCases);
 
                         String output = aiService.buildOutput(testCases);
 
