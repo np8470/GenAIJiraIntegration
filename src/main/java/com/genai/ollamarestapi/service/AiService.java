@@ -24,6 +24,8 @@ public class AiService {
 
         private final ResponseParser responseParser;
 
+        private final TestCaseNormalizerService normalizer;
+
         /**
          * Generate Manual/API/Selenium Test Cases using Ollama.
          */
@@ -60,45 +62,7 @@ public class AiService {
                         // Parse JSON returned by AI
                         List<TestCase> testCases = responseParser.parse(response.getResponse());
 
-                        for (TestCase tc : testCases) {
-
-                                if (tc.getTitle() == null || tc.getTitle().isBlank()) {
-
-                                        if (tc.getSteps() != null && !tc.getSteps().isEmpty()) {
-
-                                                String firstStep = tc.getSteps().get(0);
-
-                                                if (firstStep.length() > 70) {
-                                                        firstStep = firstStep.substring(0, 70);
-                                                }
-
-                                                tc.setTitle(firstStep);
-
-                                        } else {
-
-                                                tc.setTitle("Generated Test Case " + tc.getId());
-
-                                        }
-                                }
-
-                                if (tc.getDescription() == null || tc.getDescription().isBlank()) {
-
-                                        tc.setDescription(tc.getTitle());
-
-                                }
-
-                                if (tc.getPriority() == null || tc.getPriority().isBlank()) {
-
-                                        tc.setPriority("Medium");
-
-                                }
-
-                                if (tc.getType() == null || tc.getType().isBlank()) {
-
-                                        tc.setType("Functional");
-
-                                }
-                        }
+                        normalizer.normalizeGenerated(testCases);
 
                         log.info("Successfully parsed {} test cases.",
                                         testCases.size());
@@ -176,15 +140,120 @@ public class AiService {
                 return sb.toString();
         }
 
+        /*
+         * @Audit(action = AuditAction.REGENERATE_TEST_CASE, message =
+         * "Regenerated AI Test Case {0}")
+         * public TestCase regenerateTestCase(TestCase testCase) {
+         * 
+         * try {
+         * 
+         * String prompt = promptBuilderService
+         * .buildRegeneratePrompt(testCase);
+         * 
+         * log.info("Regenerating Test Case using Ollama...");
+         * 
+         * OllamaResponse response = ollamaClient.generate(prompt);
+         * 
+         * if (response == null) {
+         * 
+         * throw new RuntimeException(
+         * "Received null response from Ollama.");
+         * 
+         * }
+         * 
+         * List<TestCase> regenerated = responseParser.parse(response.getResponse());
+         * 
+         * if (regenerated.isEmpty()) {
+         * 
+         * throw new RuntimeException(
+         * "No regenerated test case returned.");
+         * 
+         * }
+         * 
+         * TestCase tc = regenerated.get(0);
+         * 
+         * tc.setClientId(testCase.getClientId());
+         * 
+         * tc.setId(testCase.getId());
+         * 
+         * if (tc.getPriority() == null || tc.getPriority().isBlank()) {
+         * 
+         * tc.setPriority("Medium");
+         * 
+         * }
+         * 
+         * if (tc.getType() == null || tc.getType().isBlank()) {
+         * 
+         * tc.setType("Functional");
+         * 
+         * }
+         * 
+         * if (tc.getDescription() == null || tc.getDescription().isBlank()) {
+         * 
+         * tc.setDescription(tc.getTitle());
+         * 
+         * }
+         * 
+         * return tc;
+         * 
+         * } catch (Exception ex) {
+         * 
+         * log.error("Failed to regenerate test case.", ex);
+         * 
+         * throw new AIException(
+         * "Failed to regenerate test case.",
+         * ex);
+         * 
+         * }
+         * 
+         * }
+         */
+
+        /**
+         * Bulk regenerate selected test cases.
+         */
+
+        public List<TestCase> regenerateTestCases(
+                        List<TestCase> testCases) {
+
+                return testCases
+                                .parallelStream()
+                                .map(this::regenerateTestCase)
+                                .toList();
+
+        }
+
+        /*
+         * public TestCase regenerateTestCase(TestCase original) {
+         * 
+         * String prompt = promptBuilderService
+         * .buildRegeneratePrompt(original);
+         * 
+         * OllamaResponse response = ollamaClient.generate(prompt);
+         * 
+         * TestCase regenerated = responseParser
+         * .parse(response.getResponse())
+         * .get(0);
+         * 
+         * 
+         * 
+         * regenerated.setClientId(original.getClientId());
+         * 
+         * regenerated.setId(original.getId());
+         * 
+         * return regenerated;
+         * 
+         * }
+         */
+
         @Audit(action = AuditAction.REGENERATE_TEST_CASE, message = "Regenerated AI Test Case {0}")
-        public TestCase regenerateTestCase(TestCase testCase) {
+        public TestCase regenerateTestCase(TestCase original) {
 
                 try {
 
-                        String prompt = promptBuilderService
-                                        .buildRegeneratePrompt(testCase);
+                        String prompt = promptBuilderService.buildRegeneratePrompt(original);
 
-                        log.info("Regenerating Test Case using Ollama...");
+                        log.info("Regenerating Test Case...");
 
                         OllamaResponse response = ollamaClient.generate(prompt);
 
@@ -195,38 +264,24 @@ public class AiService {
 
                         }
 
-                        List<TestCase> regenerated = responseParser.parse(response.getResponse());
+                        List<TestCase> regeneratedList = responseParser.parse(response.getResponse());
 
-                        if (regenerated.isEmpty()) {
+                        if (regeneratedList.isEmpty()) {
 
                                 throw new RuntimeException(
                                                 "No regenerated test case returned.");
 
                         }
 
-                        TestCase tc = regenerated.get(0);
+                        TestCase regenerated = regeneratedList.get(0);
 
-                        if (tc.getPriority() == null || tc.getPriority().isBlank()) {
+                        return normalizer.normalizeRegenerated(
+                                        original,
+                                        regenerated);
 
-                                tc.setPriority("Medium");
+                }
 
-                        }
-
-                        if (tc.getType() == null || tc.getType().isBlank()) {
-
-                                tc.setType("Functional");
-
-                        }
-
-                        if (tc.getDescription() == null || tc.getDescription().isBlank()) {
-
-                                tc.setDescription(tc.getTitle());
-
-                        }
-
-                        return tc;
-
-                } catch (Exception ex) {
+                catch (Exception ex) {
 
                         log.error("Failed to regenerate test case.", ex);
 
@@ -235,6 +290,5 @@ public class AiService {
                                         ex);
 
                 }
-
         }
 }

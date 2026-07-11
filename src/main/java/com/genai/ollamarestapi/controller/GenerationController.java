@@ -12,6 +12,8 @@ import com.genai.ollamarestapi.service.TestCaseOrchestratorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import com.genai.ollamarestapi.model.BulkRegenerateRequest;
+import com.genai.ollamarestapi.model.BulkRegenerateResponse;
 
 @Slf4j
 @RestController
@@ -54,5 +56,11 @@ public class GenerationController {
 
         return aiService.regenerateTestCase(testCase);
 
+    }
+
+    @PostMapping("/regenerate-selected")
+    public BulkRegenerateResponse regenerateSelected(
+            @RequestBody BulkRegenerateRequest request) {
+        return service.regenerateSelected(request);
     }
 }

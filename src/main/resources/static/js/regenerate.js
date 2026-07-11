@@ -3,9 +3,16 @@ document.addEventListener("click", async function (e) {
     if (!e.target.classList.contains("regenerateBtn"))
         return;
 
-    const index = e.target.dataset.index;
+    const clientId =
+        e.target.dataset.clientid;
 
-    const tc = generatedTestCases[index];
+    const tc =
+        generatedTestCases.find(
+            t => t.clientId === clientId
+        );
+        
+    if (!tc)
+        return;    
 
     e.target.disabled = true;
 
@@ -18,9 +25,17 @@ document.addEventListener("click", async function (e) {
             tc
         );
 
-        generatedTestCases[index] = regenerated;
+        /* generatedTestCases[index] = regenerated;
 
-        renderTestCases(generatedTestCases);
+        renderTestCases(generatedTestCases); */
+        const position =
+            generatedTestCases.findIndex(
+                t => t.clientId === clientId
+            );
+
+        generatedTestCases[position] = regenerated;
+
+        updateTestCaseCard(regenerated);
 
         showToast("Test Case regenerated successfully.");
 

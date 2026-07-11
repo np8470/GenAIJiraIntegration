@@ -8,19 +8,20 @@ async function uploadToJira() {
     document.getElementById("successAlert").style.display = "none";
     document.getElementById("errorAlert").style.display = "none";
 
-    const selected = [];
+    //---------------------------------------
+    // Get selected Client IDs
+    //---------------------------------------
+    const selectedClientIds = [];
 
     document
-        .querySelectorAll(".testcaseCheckbox")
+        .querySelectorAll(".testcaseCheckbox:checked")
         .forEach(cb => {
 
-            if (cb.checked) {
-                selected.push(parseInt(cb.value, 10));
-            }
+            selectedClientIds.push(cb.dataset.clientid);
 
         });
 
-    if (selected.length === 0) {
+    if (selectedClientIds.length === 0) {
 
         showToast("Please select at least one test case.");
 
@@ -28,26 +29,58 @@ async function uploadToJira() {
 
     }
 
-    // Disable buttons while uploading
+    //---------------------------------------
+    // Disable buttons
+    //---------------------------------------
     document.getElementById("uploadBtn").disabled = true;
     document.getElementById("generateBtn").disabled = true;
 
-    // Show upload progress
-    document.getElementById("uploadProgressContainer").style.display =
-        "block";
+    //---------------------------------------
+    // Show progress
+    //---------------------------------------
+    document.getElementById("uploadProgressContainer").style.display = "block";
 
     updateProgress(10);
 
     try {
 
+        //---------------------------------------
+        // Build selected TestCase objects
+        //---------------------------------------
         const selectedTestCases = [];
 
-        selected.forEach(index => {
+        selectedClientIds.forEach(clientId => {
 
-            selectedTestCases.push(generatedTestCases[index]);
+            const tc = generatedTestCases.find(
+
+                t => t.clientId === clientId
+
+            );
+
+            if (tc) {
+
+                selectedTestCases.push(tc);
+
+            } else {
+
+                console.warn("Test case not found for ClientId:", clientId);
+
+            }
 
         });
 
+        //---------------------------------------
+        // Safety check
+        //---------------------------------------
+        if (selectedTestCases.length === 0) {
+
+            throw new Error("No valid test cases selected.");
+
+        }
+
+        //---------------------------------------
+        // Build request
+        //---------------------------------------
         const request = {
 
             storyKey: document.getElementById("storyKey").value.trim(),
@@ -56,6 +89,13 @@ async function uploadToJira() {
 
         };
 
+        console.log("Uploading Request:", request);
+
+        updateProgress(30);
+
+        //---------------------------------------
+        // Call backend
+        //---------------------------------------
         const result = await postJson(
 
             "/api/v1/upload",
@@ -63,8 +103,6 @@ async function uploadToJira() {
             request
 
         );
-
-        updateProgress(60);
 
         updateProgress(100);
 
@@ -74,14 +112,18 @@ async function uploadToJira() {
 
         }
 
+        //---------------------------------------
         // Upload summary
+        //---------------------------------------
         document.getElementById("uploadedCount").innerHTML =
             result.uploadedCount;
 
         document.getElementById("failedCount").innerHTML =
             result.failedCount;
 
-        // Jira links returned by backend
+        //---------------------------------------
+        // Render Jira links
+        //---------------------------------------
         const jiraLinks = result.jiraLinks || [];
 
         let html = "";
@@ -90,45 +132,33 @@ async function uploadToJira() {
 
             html += "<h5 class='mb-3'>Created Jira Test Cases</h5>";
 
-            html += "<button ";
-            html += "class='btn btn-primary btn-sm mb-3' ";
-            html += "onclick='openAllJiraLinks()'>";
-            html += "Open All Test Cases";
-            html += "</button>";
+            html += `
+                <button
+                    class="btn btn-primary btn-sm mb-3"
+                    onclick="openAllJiraLinks()">
+                    Open All Test Cases
+                </button>
+            `;
 
             html += "<ul class='list-group'>";
+
             jiraLinks.forEach(link => {
 
                 const issueKey =
                     link.substring(link.lastIndexOf("/") + 1);
 
                 html += `
-
-<li class="list-group-item">
-
-    <div class="d-flex justify-content-between align-items-center mb-2">
-
-        <div>
-
-            ✅
-
-            <a href="${link}" target="_blank">
-
-                ${issueKey}
-
-            </a>
-
-        </div>
-
-        <div>
-
-        </div>
-
-    </div>
-
-</li>
-
-`;
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                ✅
+                                <a href="${link}" target="_blank">
+                                    ${issueKey}
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                `;
 
             });
 
@@ -136,11 +166,9 @@ async function uploadToJira() {
 
         }
 
-        document.getElementById("jiraLinksContainer").innerHTML =
-            html;
+        document.getElementById("jiraLinksContainer").innerHTML = html;
 
-        document.getElementById("successAlert").style.display =
-            "block";
+        document.getElementById("successAlert").style.display = "block";
 
         const duration =
             ((Date.now() - startTime) / 1000).toFixed(2);
@@ -152,14 +180,18 @@ async function uploadToJira() {
 
         showToast(result.message);
 
-    } catch (e) {
+    }
+    catch (e) {
+
+        console.error(e);
 
         document.getElementById("errorAlert").style.display = "block";
         document.getElementById("errorAlert").innerHTML = e.message;
 
         showToast(e.message, "danger");
 
-    } finally {
+    }
+    finally {
 
         document.getElementById("uploadBtn").disabled = false;
         document.getElementById("generateBtn").disabled = false;
@@ -174,7 +206,7 @@ async function uploadToJira() {
 
     }
 
-} // ✅ uploadToJira() ends here
+}
 
 
 /**

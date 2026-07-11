@@ -21,6 +21,241 @@ Depends on:
    Generate Test Cases
 ====================================================== */
 
+function buildTestCaseCard(tc, index) {
+
+    const stepsHtml = (tc.steps || [])
+        .map(step => `
+            <div class="input-group mb-2 step-row">
+
+                <span class="input-group-text dragHandle">
+                    ☰
+                </span>
+
+                <input
+                    type="text"
+                    class="form-control tc-step"
+                    value="${step}">
+
+                <button
+                    class="btn btn-outline-danger removeStepBtn"
+                    type="button">
+
+                    Remove
+
+                </button>
+
+            </div>
+        `)
+        .join("");
+
+    return `
+
+<div class="accordion-item testcase-item"
+
+     data-clientid="${tc.clientId}"
+
+     data-title="${(tc.title || "").toLowerCase()}"
+
+     data-description="${(tc.description || "").toLowerCase()}"
+
+     data-priority="${tc.priority || ""}">
+
+    <h2 class="accordion-header">
+
+        <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#tc_${tc.clientId}">
+
+            <input
+    class="form-check-input me-3 testcaseCheckbox"
+    type="checkbox"
+    checked
+    data-clientid="${tc.clientId}"
+    onclick="event.stopPropagation()">
+
+            <span class="fw-bold">
+
+                ${tc.id}
+
+            </span>
+
+        </button>
+
+    </h2>
+
+    <div
+
+        id="tc_${tc.clientId}"
+
+        class="accordion-collapse collapse">
+
+        <div class="accordion-body">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Title
+
+                </label>
+
+                <input
+
+                    class="form-control tc-title"
+
+                    value="${tc.title || ""}">
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Description
+
+                </label>
+
+                <textarea
+
+                    class="form-control tc-description"
+
+                    rows="3">${tc.description || ""}</textarea>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+
+                        Priority
+
+                    </label>
+
+                    <select class="form-select tc-priority">
+
+                        <option ${tc.priority==="High"?"selected":""}>High</option>
+
+                        <option ${tc.priority==="Medium"?"selected":""}>Medium</option>
+
+                        <option ${tc.priority==="Low"?"selected":""}>Low</option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+
+                        Type
+
+                    </label>
+
+                    <input
+
+                        class="form-control tc-type"
+
+                        value="${tc.type || ""}">
+
+                </div>
+
+            </div>
+
+            <div class="mt-3">
+
+                <label class="form-label">
+
+                    Precondition
+
+                </label>
+
+                <textarea
+
+                    class="form-control tc-precondition"
+
+                    rows="2">${tc.precondition || ""}</textarea>
+
+            </div>
+
+            <div class="mt-3">
+
+                <label class="form-label">
+
+                    Steps
+
+                </label>
+
+                <div class="stepsContainer">
+
+                    ${stepsHtml}
+
+                </div>
+
+                <button
+
+                    class="btn btn-outline-primary btn-sm addStepBtn mt-2"
+
+                    type="button">
+
+                    + Add Step
+
+                </button>
+
+            </div>
+
+            <div class="mt-3">
+
+                <label class="form-label">
+
+                    Expected Result
+
+                </label>
+
+                <textarea
+
+                    class="form-control tc-expected"
+
+                    rows="2">${tc.expectedResult || ""}</textarea>
+
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+
+                <button
+
+                    class="btn btn-success saveTestCaseBtn">
+
+                    💾 Save
+
+                </button>
+
+                <button
+
+                    class="btn btn-warning regenerateBtn"
+
+                    data-clientid="${tc.clientId}">
+
+                    🔄 Regenerate
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+`;
+
+}
+
+
 async function generate() {
 
     resetGenerationScreen();
@@ -90,225 +325,34 @@ function renderTestCases(testCases) {
     let html = "";
 
     html += `
-    <div class="mb-3">
+
+<div class="d-flex justify-content-between mb-3">
+
+    <div>
+
         <input
-            type="checkbox"
             id="selectAll"
+            type="checkbox"
             checked
             onchange="toggleAll(this)">
+
         <label for="selectAll">
+
             <b>Select All</b>
+
         </label>
+
     </div>
-    `;
 
-    testCases.forEach((tc, index) => {
+    <div>
 
-        html += `
+        <button
+            id="bulkRegenerateBtn"
+            class="btn btn-warning btn-sm">
 
-<div class="accordion-item testcase-item"
-     data-index="${index}"
-     data-title="${(tc.title || "").toLowerCase()}"
-     data-description="${(tc.description || "").toLowerCase()}"
-     data-priority="${tc.priority}">
-
-    <h2 class="accordion-header">
-
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#tc${index}">
-
-            <input
-                class="form-check-input me-3 testcaseCheckbox"
-                type="checkbox"
-                checked
-                value="${index}"
-                onclick="event.stopPropagation()">
-
-            <span class="fw-bold">
-
-                ${tc.id}
-
-            </span>
+            🔄 Regenerate Selected
 
         </button>
-
-    </h2>
-
-    <div id="tc${index}"
-         class="accordion-collapse collapse">
-
-        <div class="accordion-body">
-
-            <div class="mb-3">
-
-                <label class="form-label fw-bold">
-
-                    Title
-
-                </label>
-
-                <input
-                    class="form-control tc-title"
-                    value="${tc.title || ""}">
-
-            </div>
-
-            <div class="mb-3">
-
-                <label class="form-label fw-bold">
-
-                    Description
-
-                </label>
-
-                <textarea
-                    class="form-control tc-description"
-                    rows="2">${tc.description || ""}</textarea>
-
-            </div>
-
-            <div class="row">
-
-                <div class="col-md-6">
-
-                    <label class="form-label fw-bold">
-
-                        Priority
-
-                    </label>
-
-                    <select class="form-select tc-priority">
-
-                        <option value="High" ${tc.priority == "High" ? "selected" : ""}>High</option>
-
-                        <option value="Medium" ${tc.priority == "Medium" ? "selected" : ""}>Medium</option>
-
-                        <option value="Low" ${tc.priority == "Low" ? "selected" : ""}>Low</option>
-
-                    </select>
-
-                </div>
-
-                <div class="col-md-6">
-
-                    <label class="form-label fw-bold">
-
-                        Type
-
-                    </label>
-
-                    <input
-                        class="form-control tc-type"
-                        value="${tc.type || ""}">
-
-                </div>
-
-            </div>
-
-            <div class="mt-3">
-
-                <label class="form-label fw-bold">
-
-                    Precondition
-
-                </label>
-
-                <textarea
-                    class="form-control tc-precondition"
-                    rows="2">${tc.precondition || ""}</textarea>
-
-            </div>
-
-            <div class="mt-3">
-
-                <label class="form-label fw-bold">
-
-                    Steps
-
-                </label>
-
-                <div class="stepsContainer">
-
-    ${(tc.steps || [])
-                .map(step => `
-            <div class="input-group mb-2 step-row">
-
-    <span
-        class="input-group-text dragHandle"
-        title="Drag to reorder">
-
-        ☰
-
-    </span>
-
-    <input
-        type="text"
-        class="form-control tc-step"
-        value="${step}">
-
-    <button
-        class="btn btn-outline-danger removeStepBtn"
-        type="button">
-
-        Remove
-
-    </button>
-
-</div>
-        `)
-                .join("")}
-
-</div>
-
-                <button
-                    class="btn btn-outline-primary btn-sm mt-2 addStepBtn">
-
-                    + Add Step
-
-                </button>
-
-            </div>
-
-            <div class="mt-3">
-
-                <label class="form-label fw-bold">
-
-                    Expected Result
-
-                </label>
-
-                <textarea
-                    class="form-control tc-expected"
-                    rows="3">${tc.expectedResult || ""}</textarea>
-
-            </div>
-
-            <div class="mt-4">
-
-               <div class="d-flex gap-2 mt-4">
-
-    <button
-        class="btn btn-success saveTestCaseBtn">
-
-        Save Changes
-
-    </button>
-
-    <button
-        class="btn btn-warning regenerateBtn"
-        data-index="${index}">
-
-        🔄 Regenerate
-
-    </button>
-
-</div>
-
-            </div>
-
-        </div>
 
     </div>
 
@@ -316,6 +360,8 @@ function renderTestCases(testCases) {
 
 `;
 
+    testCases.forEach((tc, index) => {
+        html += buildTestCaseCard(tc, index);
     });
 
     document.getElementById("resultContainer").innerHTML = html;

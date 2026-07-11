@@ -1,8 +1,15 @@
 function updateGeneratedTestCase(card) {
 
-    const index = parseInt(card.dataset.index);
+    const clientId =
+    card.dataset.clientid;
 
-    const tc = generatedTestCases[index];
+    const tc =
+    generatedTestCases.find(
+        t => t.clientId === clientId
+    );
+
+    if (!tc)
+        return;
 
     tc.title = card.querySelector(".tc-title").value;
 
@@ -41,6 +48,7 @@ document.addEventListener("click", function (e) {
     updateGeneratedTestCase(card);
 
     showToast("Changes saved.");
+    updateTestCaseCard(tc);
 
 });
 
