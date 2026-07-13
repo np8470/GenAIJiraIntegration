@@ -284,6 +284,10 @@ function resetGenerationScreen() {
 
     }
 
+    document.getElementById("uploadBtn").style.display = "none";
+
+    document.getElementById("exportDropdown").style.display = "none";
+
 }
 
 

@@ -451,13 +451,86 @@
                 </div>
 
 
+                <!-- ================= Upload + Export ================= -->
+
                 <div class="text-center mt-4">
 
-                    <button id="uploadBtn" class="btn btn-success btn-lg px-5" style="display:none;">
+                    <div class="btn-group" role="group">
 
-                        Upload Test Cases to Jira
+                        <!-- Upload -->
 
-                    </button>
+                        <button id="uploadBtn" class="btn btn-success btn-lg" style="display:none;">
+
+                            <i class="bi bi-cloud-upload"></i>
+
+                            Upload Test Cases to Jira
+
+                        </button>
+
+                        <!-- Export -->
+
+                        <button id="exportDropdown" type="button" class="btn btn-primary btn-lg dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false" style="display:none;">
+
+                            <i class="bi bi-download"></i>
+
+                            Export
+
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+
+                                <a class="dropdown-item" href="#" onclick="exportTestCases('excel')">
+
+                                    <i class="bi bi-file-earmark-excel text-success"></i>
+
+                                    Export Excel
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a class="dropdown-item" href="#" onclick="exportTestCases('csv')">
+
+                                    <i class="bi bi-file-earmark-spreadsheet text-primary"></i>
+
+                                    Export CSV
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a class="dropdown-item" href="#" onclick="exportTestCases('pdf')">
+
+                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
+
+                                    Export PDF
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a class="dropdown-item" href="#" onclick="exportTestCases('word')">
+
+                                    <i class="bi bi-file-earmark-word text-primary"></i>
+
+                                    Export Word
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
 
                 </div>
 
@@ -566,6 +639,7 @@
             <script src="/js/regenerate.js"></script>
             <script src="/js/bulk-regenerate.js"></script>
             <script src="/js/upload.js"></script>
+            <script src="/js/export.js"></script>
             <script src="/js/theme.js"></script>
 
             <div class="toast-container position-fixed top-0 end-0 p-3">

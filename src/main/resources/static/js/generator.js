@@ -137,11 +137,11 @@ function buildTestCaseCard(tc, index) {
 
                     <select class="form-select tc-priority">
 
-                        <option ${tc.priority==="High"?"selected":""}>High</option>
+                        <option ${tc.priority === "High" ? "selected" : ""}>High</option>
 
-                        <option ${tc.priority==="Medium"?"selected":""}>Medium</option>
+                        <option ${tc.priority === "Medium" ? "selected" : ""}>Medium</option>
 
-                        <option ${tc.priority==="Low"?"selected":""}>Low</option>
+                        <option ${tc.priority === "Low" ? "selected" : ""}>Low</option>
 
                     </select>
 
@@ -288,8 +288,9 @@ async function generate() {
 
         renderTestCases(data.testCases || []);
 
-        document.getElementById("uploadBtn").style.display =
-            "inline-block";
+        document.getElementById("uploadBtn").style.display = "inline-block";
+
+        document.getElementById("exportDropdown").style.display = "inline-block";
 
         showToast("Test cases generated successfully.");
 

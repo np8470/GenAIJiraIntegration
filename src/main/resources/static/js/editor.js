@@ -1,12 +1,12 @@
 function updateGeneratedTestCase(card) {
 
     const clientId =
-    card.dataset.clientid;
+        card.dataset.clientid;
 
     const tc =
-    generatedTestCases.find(
-        t => t.clientId === clientId
-    );
+        generatedTestCases.find(
+            t => t.clientId === clientId
+        );
 
     if (!tc)
         return;
@@ -32,7 +32,14 @@ function updateGeneratedTestCase(card) {
 
     card.querySelectorAll(".tc-step").forEach(step => {
 
-        tc.steps.push(step.value);
+        const value =
+            step.value.trim();
+
+        if (value.length > 0) {
+
+            tc.steps.push(value);
+
+        }
 
     });
 
