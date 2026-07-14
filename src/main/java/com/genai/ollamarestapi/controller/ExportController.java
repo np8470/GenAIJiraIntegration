@@ -77,7 +77,7 @@ public class ExportController {
 
     }
 
-    /* @PostMapping("/word")
+    @PostMapping("/word")
     public ResponseEntity<byte[]> word(
             @RequestBody ExportRequest request) throws Exception {
 
@@ -96,6 +96,6 @@ public class ExportController {
 
                 .body(file);
 
-    } */
+    }
 
 }
