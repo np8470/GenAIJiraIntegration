@@ -1,6 +1,7 @@
 package com.genai.ollamarestapi.service;
 
 import com.genai.ollamarestapi.export.ExcelExporter;
+import com.genai.ollamarestapi.export.PdfExporter;
 import com.genai.ollamarestapi.model.ai.TestCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,8 @@ import java.util.List;
 public class ExportService {
 
     private final ExcelExporter excelExporter;
-    /* private final PdfExporter pdfExporter;
-    private final CsvExporter csvExporter;
+     private final PdfExporter pdfExporter;
+    /*private final CsvExporter csvExporter;
     private final WordExporter wordExporter; */
 
     public byte[] exportExcel(
@@ -23,14 +24,14 @@ public class ExportService {
         return excelExporter.export(storyKey, testCases);
     }
 
-    /* public byte[] exportPdf(
+    public byte[] exportPdf(
             String storyKey,
             List<TestCase> testCases) throws Exception {
 
         return pdfExporter.export(storyKey, testCases);
     }
 
-    public byte[] exportCsv(
+    /* public byte[] exportCsv(
             String storyKey,
             List<TestCase> testCases) throws Exception {
 

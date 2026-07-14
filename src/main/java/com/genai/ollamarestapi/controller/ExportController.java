@@ -57,7 +57,7 @@ public class ExportController {
 
     } */
 
-    /* @PostMapping("/pdf")
+    @PostMapping("/pdf")
     public ResponseEntity<byte[]> pdf(
             @RequestBody ExportRequest request) throws Exception {
 
@@ -75,7 +75,7 @@ public class ExportController {
 
                 .body(file);
 
-    } */
+    }
 
     /* @PostMapping("/word")
     public ResponseEntity<byte[]> word(
