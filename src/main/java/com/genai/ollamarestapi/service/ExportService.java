@@ -1,8 +1,10 @@
 package com.genai.ollamarestapi.service;
 
-import com.genai.ollamarestapi.export.ExcelExporter;
-import com.genai.ollamarestapi.export.PdfExporter;
-import com.genai.ollamarestapi.export.WordExporter;
+import com.genai.ollamarestapi.export.common.ReportContext;
+import com.genai.ollamarestapi.export.common.ReportContextBuilder;
+import com.genai.ollamarestapi.export.excel.ExcelExporter;
+import com.genai.ollamarestapi.export.pdf.PdfExporter;
+import com.genai.ollamarestapi.export.word.WordExporter;
 import com.genai.ollamarestapi.model.ai.TestCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,15 +23,24 @@ public class ExportService {
     public byte[] exportExcel(
             String storyKey,
             List<TestCase> testCases) throws Exception {
+        ReportContext context =
+            ReportContextBuilder.build(
+                    storyKey,
+                    testCases);
 
-        return excelExporter.export(storyKey, testCases);
+    return excelExporter.export(context);
     }
 
     public byte[] exportPdf(
             String storyKey,
             List<TestCase> testCases) throws Exception {
+        ReportContext context =
+            ReportContextBuilder.build(
+                    storyKey,
+                    testCases);
 
-        return pdfExporter.export(storyKey, testCases);
+    return pdfExporter.export(context);
+
     }
 
     /* public byte[] exportCsv(
@@ -42,8 +53,11 @@ public class ExportService {
     public byte[] exportWord(
             String storyKey,
             List<TestCase> testCases) throws Exception {
-
-        return wordExporter.export(storyKey, testCases);
+            ReportContext context =
+            ReportContextBuilder.build(
+                    storyKey,
+                    testCases);
+        return wordExporter.export(context);
     } 
 
 }
