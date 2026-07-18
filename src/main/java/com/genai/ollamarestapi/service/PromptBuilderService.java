@@ -20,7 +20,7 @@ public class PromptBuilderService {
     log.info("Build Prompt for Work Item id and Generation Type {} -> {}", story, type);
     return switch (type) {
 
-      case TEST_CASES ->
+      case UI_TEST_CASES ->
         manualPrompt(story);
 
       case API_TEST_CASES ->

@@ -163,19 +163,21 @@ public class GenerationHistoryService {
     }
 
     public void saveFailure(
-            User user,
-            String storyKey,
-            long responseTime) {
+        User user,
+        String storyKey,
+        GenerationType generationType,
+        long responseTime) {
 
-        GenerationHistory history = GenerationHistory.builder()
-                .user(user)
-                .storyKey(storyKey)
-                .status("FAILED")
-                .responseTimeMs(responseTime)
-                .build();
+    GenerationHistory history = GenerationHistory.builder()
+            .user(user)
+            .storyKey(storyKey)
+            .generationType(generationType.name())
+            .status("FAILED")
+            .responseTimeMs(responseTime)
+            .build();
 
-        repository.save(history);
-    }
+    repository.save(history);
+}
 
     @Transactional
 public void markUploaded(

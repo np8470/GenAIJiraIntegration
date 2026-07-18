@@ -1,5 +1,9 @@
 package com.genai.ollamarestapi.dto;
 
+import java.util.List;
+
+import com.genai.ollamarestapi.audit.AuditLog;
+
 import lombok.*;
 
 @Getter
@@ -9,9 +13,11 @@ import lombok.*;
 @AllArgsConstructor
 public class DashboardStatisticsResponse {
 
-    private long totalGenerations;
+    //----------------------------
+    // Overview
+    //----------------------------
 
-    private long totalTestCases;
+    private long totalGenerations;
 
     private long successfulRuns;
 
@@ -19,10 +25,44 @@ public class DashboardStatisticsResponse {
 
     private double successRate;
 
+    //----------------------------
+    // AI
+    //----------------------------
+
+    private long totalTestCases;
+
     private double averageResponseTime;
+
+    private String mostUsedAiModel;
+
+    //----------------------------
+    // Upload
+    //----------------------------
 
     private long uploadedToJira;
 
-    private String mostUsedAiModel;
+    private long pendingUpload;
+
+    //----------------------------
+    // Type
+    //----------------------------
+
+    private long uiReports;
+
+    private long apiReports;
+
+    private long seleniumReports;
+
+    //----------------------------
+    // Priority
+    //----------------------------
+
+    private long highPriority;
+
+    private long mediumPriority;
+
+    private long lowPriority;
+
+    private List<AuditLog> recentLogs;
 
 }

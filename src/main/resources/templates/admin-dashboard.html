@@ -4,28 +4,328 @@
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TestPilot AI Enterprise Dashboard</title>
+    <title>TestPilot AI | Enterprise Dashboard</title>
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
+    <!-- Existing CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
 
+    <!-- ChartJS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script src="/js/dashboard.js"></script>
 
 </head>
 
-<body>
+<body class="bg-light">
 
     <div class="container-fluid py-4">
 
-        <!-- ================= HEADER ================= -->
+        <!-- ====================================================== -->
+        <!-- HEADER -->
+        <!-- ====================================================== -->
 
-        <div class="card shadow-lg mb-4">
+        <div class="card shadow-lg border-0 mb-4">
+
+            <div class="card-body">
+
+                <div class="row align-items-center">
+
+                    <!-- ====================================== -->
+                    <!-- LEFT -->
+                    <!-- ====================================== -->
+
+                    <div class="col-lg-8">
+
+                        <div class="d-flex align-items-center">
+
+                            <!-- Logo -->
+
+                            <div class="me-4">
+
+                                <div class="dashboard-logo">
+
+                                    <div class="shield">
+
+                                        ✓
+
+                                        <span class="ai-badge">
+
+                                            AI
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Branding -->
+
+                            <div>
+
+                                <h2 class="fw-bold mb-1">
+
+                                    TestPilot
+                                    <span class="text-primary">
+
+                                        AI
+
+                                    </span>
+
+                                </h2>
+
+                                <div class="text-muted">
+
+                                    Enterprise Analytics Dashboard
+
+                                </div>
+
+                                <small class="text-secondary">
+
+                                    AI Powered Jira Test Automation Platform
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ====================================== -->
+                    <!-- RIGHT -->
+                    <!-- ====================================== -->
+
+                    <div class="col-lg-4">
+
+                        <div class="d-flex justify-content-end align-items-center">
+
+                            <!-- User -->
+
+                            <div class="text-end me-4">
+
+                                <div class="small text-muted">
+
+                                    Logged in as
+
+                                </div>
+
+                                <h6 class="mb-0 fw-bold">
+
+                                    <i class="bi bi-person-circle"></i>
+
+                                    <span th:text="${username}">
+
+                                        admin
+
+                                    </span>
+
+                                </h6>
+
+                            </div>
+
+                            <!-- Buttons -->
+
+                            <div>
+
+                                <a th:href="@{/dashboard}" class="btn btn-primary me-2">
+
+                                    <i class="bi bi-magic"></i>
+
+                                    AI Generator
+
+                                </a>
+
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+
+                                    <button class="btn btn-danger">
+
+                                        <i class="bi bi-box-arrow-right"></i>
+
+                                        Logout
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <span class="badge bg-success">
+
+            <i class="bi bi-circle-fill"></i>
+
+            System Online
+
+        </span>
+
+        <!-- ====================================================== -->
+        <!-- HERO SUMMARY -->
+        <!-- ====================================================== -->
+
+        <div class="card border-0 shadow mb-4">
+
+            <div class="card-body">
+
+                <div class="row align-items-center">
+
+                    <div class="col-lg-8">
+
+                        <h3 class="fw-bold mb-3">
+
+                            Welcome to TestPilot AI Enterprise Dashboard
+
+                        </h3>
+
+                        <p class="text-muted mb-0">
+
+                            Monitor AI-powered test case generation,
+                            Jira uploads,
+                            automation productivity,
+                            system usage,
+                            recent activities,
+                            and enterprise analytics from a single dashboard.
+
+                        </p>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <div class="row text-center">
+
+                            <div class="col-4">
+
+                                <i class="bi bi-robot display-5 text-primary"></i>
+
+                                <div class="small mt-2">
+
+                                    AI
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-4">
+
+                                <i class="bi bi-cloud-upload display-5 text-success"></i>
+
+                                <div class="small mt-2">
+
+                                    Jira
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-4">
+
+                                <i class="bi bi-graph-up-arrow display-5 text-warning"></i>
+
+                                <div class="small mt-2">
+
+                                    Analytics
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- DASHBOARD TOOLBAR -->
+        <!-- ===================================================== -->
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h4 class="fw-bold mb-0">
+                    Enterprise Analytics
+                </h4>
+
+                <small class="text-muted">
+
+                    Last Updated :
+                    <span id="lastUpdated">--</span>
+
+                </small>
+
+            </div>
+
+            <div>
+
+                <button class="btn btn-outline-primary me-2" onclick="refreshDashboard()">
+
+                    <i class="bi bi-arrow-clockwise"></i>
+
+                    Refresh
+
+                </button>
+
+                <button class="btn btn-outline-success me-2" onclick="exportDashboard('excel')">
+
+                    <i class="bi bi-file-earmark-excel"></i>
+
+                    Excel
+
+                </button>
+
+                <button class="btn btn-outline-danger" onclick="exportDashboard('pdf')">
+
+                    <i class="bi bi-file-earmark-pdf"></i>
+
+                    PDF
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ====================================================== -->
+        <!-- KPI CARDS -->
+        <!-- ====================================================== -->
+
+       <!-- ====================================================== -->
+<!-- KPI CARDS -->
+<!-- ====================================================== -->
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3 mb-4">
+
+    <!-- Total AI Generations -->
+    <div class="col">
+
+        <div class="card dashboard-card shadow h-100">
 
             <div class="card-body">
 
@@ -33,187 +333,731 @@
 
                     <div>
 
-                        <h1 class="display-6 fw-bold">
+                        <small class="text-muted">
+                            Total AI Generations
+                        </small>
 
-                            ⚡ TestPilot <span class="text-primary">AI</span>
+                        <h3 class="fw-bold text-primary mt-2"
+                            th:text="${dashboard.totalGenerations}">
+                            0
+                        </h3>
 
-                        </h1>
+                    </div>
 
-                        <p class="text-muted mb-0">
+                    <div class="icon-circle bg-primary">
 
-                            Enterprise Dashboard
+                        <i class="bi bi-robot text-white fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Generated Test Cases -->
+    <div class="col">
+
+        <div class="card dashboard-card shadow h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small class="text-muted">
+                            Generated Test Cases
+                        </small>
+
+                        <h3 class="fw-bold text-success mt-2"
+                            th:text="${dashboard.totalTestCases}">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="icon-circle bg-success">
+
+                        <i class="bi bi-list-check text-white fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Uploaded -->
+    <div class="col">
+
+        <div class="card dashboard-card shadow h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small class="text-muted">
+                            Uploaded To Jira
+                        </small>
+
+                        <h3 class="fw-bold text-warning mt-2"
+                            th:text="${dashboard.uploadedToJira}">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="icon-circle bg-warning">
+
+                        <i class="bi bi-cloud-upload text-white fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Success -->
+    <div class="col">
+
+        <div class="card dashboard-card shadow h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small class="text-muted">
+                            Success Rate
+                        </small>
+
+                        <h3 class="fw-bold text-danger mt-2">
+
+                            <span th:text="${#numbers.formatDecimal(dashboard.successRate,1,2)}"></span>%
+
+                        </h3>
+
+                    </div>
+
+                    <div class="icon-circle bg-danger">
+
+                        <i class="bi bi-graph-up-arrow text-white fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Average Response Time -->
+    <div class="col">
+
+        <div class="card dashboard-card shadow h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small class="text-muted">
+                            Avg Response Time
+                        </small>
+
+                        <h3 class="fw-bold text-info mt-2">
+
+                            <span th:text="${#numbers.formatDecimal(dashboard.averageResponseTime,1,0)}"></span>
+
+                            <small class="fs-6">ms</small>
+
+                        </h3>
+
+                    </div>
+
+                    <div class="icon-circle bg-info">
+
+                        <i class="bi bi-stopwatch text-white fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+        <!-- ========================================================= -->
+        <!--                  ANALYTICS CHARTS                         -->
+        <!-- ========================================================= -->
+
+        <div class="row mt-4">
+
+            <!-- AI Overview -->
+
+            <div class="col-lg-6 mb-4">
+
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-header bg-white">
+
+                        <h5 class="mb-0">
+
+                            <i class="bi bi-bar-chart-fill text-primary"></i>
+
+                            AI Overview
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas id="usageChart" height="250"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Upload -->
+
+            <div class="col-lg-6 mb-4">
+
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-header bg-white">
+
+                        <h5 class="mb-0">
+
+                            <i class="bi bi-cloud-upload-fill text-success"></i>
+
+                            Upload Statistics
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas id="uploadChart" height="250"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <!-- Priority -->
+
+            <div class="col-lg-6 mb-4">
+
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-header bg-white">
+
+                        <h5 class="mb-0">
+
+                            <i class="bi bi-pie-chart-fill text-danger"></i>
+
+                            Priority Distribution
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                            <canvas id="priorityChart" height="250"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Report Type -->
+
+            <div class="col-lg-6 mb-4">
+
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-header bg-white">
+
+                        <h5 class="mb-0">
+
+                            <i class="bi bi-graph-up-arrow text-warning"></i>
+
+                            Report Type Distribution
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                            <canvas id="reportTypeChart" height="250"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ========================================================= -->
+        <!--                RECENT AI GENERATIONS                      -->
+        <!-- ========================================================= -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header bg-primary text-white">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-clock-history"></i>
+
+                        Recent AI Generations
+
+                    </h5>
+
+                    <span class="badge bg-light text-dark">
+
+                        Latest Activity
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>Story</th>
+
+                                <th>Generation Type</th>
+
+                                <th>Status</th>
+
+                                <th>Generated Test Cases</th>
+
+                                <th>AI Model</th>
+
+                                <th>Date</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="recentGenerationBody">
+
+                            <tr>
+
+                                <td colspan="6" class="text-center text-muted py-4">
+
+                                    Loading recent generations...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ========================================================= -->
+        <!--                   RECENT AUDIT LOGS                       -->
+        <!-- ========================================================= -->
+
+        <!-- <div class="card shadow-sm mb-5">
+
+            <div class="card-header bg-dark text-white">
+
+                <div class="d-flex justify-content-between">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-shield-check"></i>
+
+                        Recent Audit Logs
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>User</th>
+
+                                <th>Action</th>
+
+                                <th>Status</th>
+
+                                <th>Details</th>
+
+                                <th>Execution</th>
+
+                                <th>Timestamp</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr th:each="log : ${dashboard.recentLogs}">
+
+                                <td>
+
+                                    <strong th:text="${log.username}">
+                                    </strong>
+
+                                </td>
+
+                                <td th:text="${log.action}">
+                                </td>
+
+                                <td>
+
+                                    <span class="badge bg-success" th:if="${log.status=='SUCCESS'}">
+
+                                        SUCCESS
+
+                                    </span>
+
+                                    <span class="badge bg-danger" th:if="${log.status=='FAILED'}">
+
+                                        FAILED
+
+                                    </span>
+
+                                </td>
+
+                                <td th:text="${log.details}">
+                                </td>
+
+                                <td>
+
+                                    <span th:text="${log.executionTimeMs}">
+                                    </span>
+
+                                    ms
+
+                                </td>
+
+                                <td>
+
+                                    <span th:text="${#temporals.format(log.timestamp,'dd-MMM-yyyy HH:mm')}">
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(dashboard.recentLogs)}">
+
+                                <td colspan="6" class="text-center text-muted py-4">
+
+                                    No audit activity found.
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div> -->
+
+
+        <!-- ========================================================= -->
+        <!--                    QUICK ACTIONS                          -->
+        <!-- ========================================================= -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header bg-primary text-white">
+
+                <h5 class="mb-0">
+
+                    <i class="bi bi-lightning-charge-fill"></i>
+
+                    Quick Actions
+
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-4">
+
+                    <div class="col-lg-3">
+
+                        <a th:href="@{/dashboard}" class="text-decoration-none">
+
+                            <div class="card border-primary shadow-sm h-100 quick-card">
+
+                                <div class="card-body text-center">
+
+                                    <div class="display-5">
+
+                                        🤖
+
+                                    </div>
+
+                                    <h5 class="mt-3">
+
+                                        AI Generator
+
+                                    </h5>
+
+                                    <p class="text-muted mb-0">
+
+                                        Generate AI Test Cases
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-lg-3">
+
+                        <a th:href="@{/admin/users}" class="text-decoration-none">
+
+                            <div class="card border-success shadow-sm h-100 quick-card">
+
+                                <div class="card-body text-center">
+
+                                    <div class="display-5">
+
+                                        👥
+
+                                    </div>
+
+                                    <h5 class="mt-3">
+
+                                        User Management
+
+                                    </h5>
+
+                                    <p class="text-muted mb-0">
+
+                                        Manage Application Users
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-lg-3">
+
+                        <a th:href="@{/admin/audit}" class="text-decoration-none">
+
+                            <div class="card border-warning shadow-sm h-100 quick-card">
+
+                                <div class="card-body text-center">
+
+                                    <div class="display-5">
+
+                                        📋
+
+                                    </div>
+
+                                    <h5 class="mt-3">
+
+                                        Audit Logs
+
+                                    </h5>
+
+                                    <p class="text-muted mb-0">
+
+                                        View User Activity
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-lg-3">
+
+                        <a th:href="@{/admin/reports}" class="text-decoration-none">
+
+                            <div class="card border-danger shadow-sm h-100 quick-card">
+
+                                <div class="card-body text-center">
+
+                                    <div class="display-5">
+
+                                        📊
+
+                                    </div>
+
+                                    <h5 class="mt-3">
+
+                                        Reports
+
+                                    </h5>
+
+                                    <p class="text-muted mb-0">
+
+                                        Analytics & Reports
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ========================================================= -->
+        <!--                   SYSTEM HEALTH                           -->
+        <!-- ========================================================= -->
+
+        <div class="row mb-5">
+
+            <div class="col-lg-4">
+
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-header">
+
+                        🤖 AI Model
+
+                    </div>
+
+                    <div class="card-body text-center">
+
+                        <h3 class="text-success">
+
+                            ONLINE
+
+                        </h3>
+
+                        <p>
+
+                            Ollama - Mistral
 
                         </p>
 
                     </div>
 
-                    <div class="text-end">
-
-                        <div class="welcome-user">
-
-                            <i class="bi bi-person-circle"></i>
-
-                            <span>
-
-                                Welcome,
-
-                                <strong th:text="${username}">
-                                    admin
-                                </strong>
-
-                            </span>
-
-                        </div>
-
-                        <form th:action="@{/logout}" method="post">
-
-                            <button class="btn btn-danger">
-
-                                Logout
-
-                            </button>
-
-                        </form>
-
-                    </div>
-
                 </div>
 
             </div>
 
-        </div>
+            <div class="col-lg-4">
 
-        <!-- ================= KPI CARDS ================= -->
-
-        <div class="row g-4">
-
-            <div class="col-lg-3">
-
-                <div class="card dashboard-card text-center shadow">
-
-                    <div class="card-body">
-
-                        <div class="display-4">
-
-                            🤖
-
-                        </div>
-
-                        <h5>
-
-                            AI Generations
-
-                        </h5>
-
-                        <h2 class="text-primary" th:text="${dashboard.totalAiGenerations}">
-                        </h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-lg-3">
-
-                <div class="card dashboard-card text-center shadow">
-
-                    <div class="card-body">
-
-                        <div class="display-4">
-
-                            ☁️
-
-                        </div>
-
-                        <h5>
-
-                            Jira Uploads
-
-                        </h5>
-
-                        <h2 class="text-success" th:text="${dashboard.totalUploads}">
-                        </h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-lg-3">
-
-                <div class="card dashboard-card text-center shadow">
-
-                    <div class="card-body">
-
-                        <div class="display-4">
-
-                            👥
-
-                        </div>
-
-                        <h5>
-
-                            Users
-
-                        </h5>
-
-                        <h2 class="text-warning" th:text="${dashboard.totalUsers}">
-                        </h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-lg-3">
-
-                <div class="card dashboard-card text-center shadow">
-
-                    <div class="card-body">
-
-                        <div class="display-4">
-
-                            📋
-
-                        </div>
-
-                        <h5>
-
-                            Audit Logs
-
-                        </h5>
-
-                        <h2 class="text-danger" th:text="${dashboard.totalAuditLogs}">
-                        </h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- ================= CHARTS ================= -->
-
-        <div class="row mt-5">
-
-            <div class="col-lg-6">
-
-                <div class="card shadow">
+                <div class="card shadow-sm h-100">
 
                     <div class="card-header">
 
-                        AI Usage Statistics
+                        ☁️ Jira Connectivity
 
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body text-center">
 
-                        <canvas id="usageChart"></canvas>
+                        <h3 class="text-success">
+
+                            CONNECTED
+
+                        </h3>
+
+                        <p>
+
+                            Jira Cloud
+
+                        </p>
 
                     </div>
 
@@ -221,19 +1065,29 @@
 
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-4">
 
-                <div class="card shadow">
+                <div class="card shadow-sm h-100">
 
                     <div class="card-header">
 
-                        Upload Statistics
+                        💾 Database
 
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body text-center">
 
-                        <canvas id="uploadChart"></canvas>
+                        <h3 class="text-success">
+
+                            HEALTHY
+
+                        </h3>
+
+                        <p>
+
+                            PostgreSQL
+
+                        </p>
 
                     </div>
 
@@ -243,137 +1097,67 @@
 
         </div>
 
-        <!-- ================= RECENT AUDIT ================= -->
 
-        <div class="card shadow mt-5">
 
-            <div class="card-header bg-primary text-white">
+        <!-- ========================================================= -->
+        <!--                APPLICATION INFORMATION                    -->
+        <!-- ========================================================= -->
 
-                Recent Audit Activity
-
-            </div>
-
-            <div class="card-body">
-
-                <table class="table table-hover">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>User</th>
-
-                            <th>Action</th>
-
-                            <th>Status</th>
-
-                            <th>Details</th>
-
-                            <th>Execution</th>
-
-                            <th>Timestamp</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        <tr th:each="log : ${dashboard.recentLogs}">
-
-                            <td th:text="${log.username}"></td>
-
-                            <td th:text="${log.action}"></td>
-
-                            <td>
-
-                                <span class="badge bg-success" th:if="${log.status=='SUCCESS'}">
-
-                                    SUCCESS
-
-                                </span>
-
-                                <span class="badge bg-danger" th:if="${log.status=='FAILED'}">
-
-                                    FAILED
-
-                                </span>
-
-                            </td>
-
-                            <td th:text="${log.details}"></td>
-
-                            <td>
-
-                                <span th:text="${log.executionTimeMs}"></span>
-
-                                ms
-
-                            </td>
-
-                            <td th:text="${#temporals.format(log.timestamp,'dd-MMM-yyyy HH:mm')}"></td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-        <!-- ================= QUICK ACTIONS ================= -->
-
-        <div class="card shadow mt-5">
+        <div class="card shadow-sm mb-5">
 
             <div class="card-header bg-dark text-white">
 
-                Quick Actions
+                <h5 class="mb-0">
+
+                    <i class="bi bi-info-circle-fill"></i>
+
+                    Application Information
+
+                </h5>
 
             </div>
 
             <div class="card-body">
 
-                <div class="row text-center">
+                <div class="row">
 
                     <div class="col-md-3">
 
-                        <a th:href="@{/dashboard}" class="btn btn-primary w-100">
+                        <strong>Application</strong>
 
-                            🤖 Generate Test Cases
+                        <br>
 
-                        </a>
+                        TestPilot AI
 
                     </div>
 
                     <div class="col-md-3">
 
-                        <a th:href="@{/admin/audit}" class="btn btn-warning w-100">
+                        <strong>Version</strong>
 
-                            📋 Audit Logs
+                        <br>
 
-                        </a>
-
-                    </div>
-
-                    <div class="col-md-3">
-
-                        <a th:href="@{/admin/users}" class="btn btn-success w-100">
-
-                            👥 User Management
-
-                        </a>
+                        Enterprise v1.0
 
                     </div>
 
                     <div class="col-md-3">
 
-                        <a th:href="@{/admin/reports}" class="btn btn-secondary w-100">
+                        <strong>AI Engine</strong>
 
-                            📊 Reports
+                        <br>
 
-                        </a>
+                        Ollama Mistral
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <strong>Framework</strong>
+
+                        <br>
+
+                        Spring Boot 3.x
 
                     </div>
 
@@ -383,21 +1167,87 @@
 
         </div>
 
-    </div>
+
+
+        <!-- ========================================================= -->
+        <!--                  HIDDEN DASHBOARD DATA                    -->
+        <!-- ========================================================= -->
+
+        <div id="dashboardStats"
+            th:data-total="${dashboard.totalGenerations}"
+            th:data-uploaded="${dashboard.uploadedToJira}"
+            th:data-success="${dashboard.successfulRuns}"
+            th:data-failed="${dashboard.failedRuns}"
+            th:data-testcases="${dashboard.totalTestCases}"
+            th:data-ui="${dashboard.uiReports}" 
+            th:data-api="${dashboard.apiReports}"
+            th:data-selenium="${dashboard.seleniumReports}" 
+            th:data-high="${dashboard.highPriority}"
+            th:data-medium="${dashboard.mediumPriority}" 
+            th:data-low="${dashboard.lowPriority}" 
+            style="display:none;">
+        </div>
 
 
 
-    <!-- Dashboard Statistics -->
-    <div id="dashboardStats" th:data-ai="${dashboard.totalAiGenerations}" th:data-uploads="${dashboard.totalUploads}"
-        th:data-users="${dashboard.totalUsers}" th:data-audits="${dashboard.totalAuditLogs}" style="display:none;">
-    </div>
+        <!-- ========================================================= -->
+        <!--                       FOOTER                              -->
+        <!-- ========================================================= -->
 
+        <footer class="text-center py-4 border-top">
 
-    <script>
+            <h5>
 
+                ⚡ TestPilot AI Enterprise Dashboard
 
+            </h5>
 
-    </script>
+            <div class="text-muted">
+
+                AI Powered Jira Test Case Generator
+
+            </div>
+
+            <div class="small text-muted mt-2">
+
+                Version 1.0 • Spring Boot • Ollama • Jira Cloud • PostgreSQL
+
+            </div>
+
+        </footer>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+
+            <div id="dashboardToast" class="toast" role="alert">
+
+                <div class="toast-header">
+
+                    <strong class="me-auto">
+
+                        TestPilot AI
+
+                    </strong>
+
+                    <button class="btn-close" data-bs-dismiss="toast">
+                    </button>
+
+                </div>
+
+                <div id="toastMessage" class="toast-body">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!--                    JAVASCRIPT                             -->
+        <!-- ========================================================= -->
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script src="/js/dashboard.js"></script>
 
 </body>
 

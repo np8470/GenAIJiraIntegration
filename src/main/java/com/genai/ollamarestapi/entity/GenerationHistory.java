@@ -26,28 +26,28 @@ public class GenerationHistory {
 
     @Column(nullable = false)
     private String storyKey;
-    
+
     private String storySummary;
 
     @Column(columnDefinition = "TEXT")
     private String acceptanceCriteria;
 
+    @Column(length = 30, nullable = false)
     private String generationType;
 
+    @Column(length = 100)
     private String aiModel;
 
     private Long responseTimeMs;
 
     private Integer testCaseCount;
 
+    @Column(length = 20)
     private String status;
 
     private LocalDateTime createdAt;
 
-    @OneToMany(
-            mappedBy = "history",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToMany(mappedBy = "history", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<GenerationTestCase> testCases = new ArrayList<>();
 

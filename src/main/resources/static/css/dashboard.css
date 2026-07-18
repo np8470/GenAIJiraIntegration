@@ -6,3 +6,142 @@
     width: 100% !important;
 
 }
+
+
+.dashboard-card {
+
+    border-radius: 16px;
+
+    transition: .25s;
+
+}
+
+.dashboard-card:hover {
+
+    transform: translateY(-5px);
+
+}
+
+.icon-circle {
+
+    width: 70px;
+
+    height: 70px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.dashboard-card {
+
+    transition: .3s;
+
+    border: none;
+
+    border-radius: 18px;
+
+}
+
+.dashboard-card:hover {
+
+    transform: translateY(-6px);
+
+    box-shadow: 0 15px 35px rgba(0, 0, 0, .15);
+
+}
+
+.quick-card {
+
+    transition: .3s;
+
+}
+
+.quick-card:hover {
+
+    transform: scale(1.04);
+
+}
+
+.card {
+
+    border-radius: 18px;
+
+}
+
+.table-hover tbody tr:hover {
+
+    background: #f5f8ff;
+
+}
+
+.progress {
+
+    height: 10px;
+
+    border-radius: 20px;
+
+}
+
+.progress-bar {
+
+    border-radius: 20px;
+
+}
+
+/* .chart-container {
+    position: relative;
+    height: 260px;
+    width: 100%;
+} */
+
+#priorityChart{
+
+    max-width:280px;
+
+    max-height:280px;
+
+    margin:auto;
+
+}
+
+#reportTypeChart{
+
+    max-height:260px;
+
+}
+
+
+.dashboard-card{
+    transition:.25s ease;
+    border:none;
+    border-radius:16px;
+}
+
+.dashboard-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 12px 30px rgba(0,0,0,.15);
+}
+
+.dashboard-card .card-body{
+    padding:1.2rem;
+}
+
+.icon-circle{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.dashboard-card{
+    min-height:140px;
+}

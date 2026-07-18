@@ -97,6 +97,8 @@ public class GenerationService {
                     userService.getCurrentUser(),
 
                     storyKey,
+                    
+                    type,
 
                     System.currentTimeMillis() - start);
 
