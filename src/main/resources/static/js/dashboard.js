@@ -26,6 +26,8 @@ let uploadChart = null;
 let priorityChart = null;
 let reportTypeChart = null;
 
+
+
 /*==========================================================
 =            DOM Ready                                     =
 ==========================================================*/
@@ -144,23 +146,29 @@ const commonOptions = {
 
     maintainAspectRatio: false,
 
-    plugins: {
+    plugins:{
 
-        legend: {
+    legend:{
 
-            position: "bottom",
-
-            labels: {
-
-                usePointStyle: true,
-
-                padding: 20
-
-            }
-
+        labels:{
+            padding:20,
+            usePointStyle:true,
+            pointStyle:"circle"
         }
 
+    },
+
+    tooltip:{
+
+        cornerRadius:10,
+
+        padding:14,
+
+        backgroundColor:"#212529"
+
     }
+
+}
 
 };
 
@@ -949,3 +957,49 @@ function exportDashboard(type) {
     }
 
 }
+
+
+function animateCounter(element) {
+
+    const target = Number(
+        element.innerText.replace(/,/g, "")
+    );
+
+    if (isNaN(target)) return;
+
+    let current = 0;
+
+    const increment = Math.max(target / 60, 1);
+
+    const timer = setInterval(() => {
+
+        current += increment;
+
+        if (current >= target) {
+
+            current = target;
+
+            clearInterval(timer);
+
+        }
+
+        element.innerText =
+            Math.floor(current).toLocaleString();
+
+    },20);
+
+}
+
+window.addEventListener("load",()=>{
+
+    document.querySelectorAll(
+
+        ".dashboard-card h3"
+
+    ).forEach(
+
+        animateCounter
+
+    );
+
+});
