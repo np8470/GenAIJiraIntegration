@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.genai.ollamarestapi.entity.GenerationTestCase;
 import com.genai.ollamarestapi.model.UploadRequest;
 import com.genai.ollamarestapi.model.UploadResponse;
 import com.genai.ollamarestapi.model.ai.TestCase;
+import com.genai.ollamarestapi.repository.GenerationTestCaseRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,11 @@ public class JiraUploadService {
 
     private final JiraService jiraService;
 
-    public UploadResponse upload(
+    private final GenerationTestCaseRepository generationTestCaseRepository;
+
+    private final GenerationHistoryService generationHistoryService;
+
+    /* public UploadResponse upload(
 
             UploadRequest request) {
 
@@ -29,9 +35,21 @@ public class JiraUploadService {
 
         List<String> links = new ArrayList<>();
 
-        for(TestCase tc : request.getTestCases()){
+        List<GenerationTestCase> entities =
+            generationTestCaseRepository.findAllByIdIn(request.getTestCaseIds());
+
+
+        //for(TestCase tc : request.getTestCases()){
+        for(Long id : request.getTestCaseIds()){
 
             try{
+
+                GenerationTestCase entity =
+            generationTestCaseRepository
+                    .findById(id)
+                    .orElseThrow();
+
+    TestCase tc = convertToTestCase(entity);
 
                 String key =
 
@@ -46,6 +64,10 @@ public class JiraUploadService {
                         request.getStoryKey(),
 
                         key);
+
+                        generationHistoryService.markUploaded(
+            entity.getId(),
+            key);
 
                 links.add(
 
@@ -77,7 +99,66 @@ public class JiraUploadService {
 
                 links);
 
+    } */
+
+                public UploadResponse upload(UploadRequest request){
+
+    int uploaded = 0;
+
+    int failed = 0;
+
+    List<String> links = new ArrayList<>();
+
+    List<GenerationTestCase> entities =
+            generationTestCaseRepository.findAllByIdIn(request.getTestCaseIds());
+
+    for(GenerationTestCase entity : entities){
+
+        try{
+            
+            TestCase tc = convertToTestCase(entity);
+            String jiraKey =
+                    jiraService.createTestCase(
+                            "SCRUM",
+                            tc);
+
+            jiraService.linkIssue(
+                    request.getStoryKey(),
+                    jiraKey);
+
+            generationHistoryService.markUploaded(
+        entity.getId(),
+        jiraKey);
+
+            links.add(
+                    jiraService.getBrowseUrl(jiraKey));
+
+            uploaded++;
+
+        }
+        catch(Exception ex){
+
+            failed++;
+
+            log.error("Upload failed",ex);
+
+        }
+
     }
+
+    return new UploadResponse(
+
+            uploaded>0,
+
+            uploaded+" uploaded.",
+
+            uploaded,
+
+            failed,
+
+            links);
+
+}
 
 
     private String buildJiraDescription(TestCase tc) {
@@ -127,6 +208,25 @@ private String nullToEmpty(String value) {
 
     return value == null ? "" : value;
 
+}
+
+private TestCase convertToTestCase(GenerationTestCase entity) {
+
+    TestCase tc = new TestCase();
+    tc.setId(entity.getId().toString());
+    tc.setTitle(entity.getTitle());
+    tc.setDescription(entity.getDescription());
+    tc.setPriority(entity.getPriority());
+    tc.setType(entity.getType());
+    tc.setPrecondition(entity.getPrecondition());
+
+    if (entity.getSteps() != null && !entity.getSteps().isBlank()) {
+        tc.setSteps(List.of(entity.getSteps().split("\\n")));
+    }
+
+    tc.setExpectedResult(entity.getExpectedResult());
+
+    return tc;
 }
 
 }

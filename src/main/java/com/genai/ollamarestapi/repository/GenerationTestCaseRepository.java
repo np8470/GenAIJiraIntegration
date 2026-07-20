@@ -2,6 +2,8 @@ package com.genai.ollamarestapi.repository;
 
 import com.genai.ollamarestapi.entity.GenerationTestCase;
 import com.genai.ollamarestapi.entity.User;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -36,5 +38,7 @@ public interface GenerationTestCaseRepository
         long countByHistoryUserAndUploadedToJiraFalse(
 
                         User user);
+
+        List<GenerationTestCase> findAllByIdIn(List<Long> ids);                        
 
 }

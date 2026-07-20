@@ -75,11 +75,17 @@ function buildTestCaseCard(tc, index) {
     data-clientid="${tc.clientId}"
     onclick="event.stopPropagation()">
 
-            <span class="fw-bold">
+            <div>
 
-                ${tc.id}
+    <span class="badge bg-primary me-2">
 
-            </span>
+        TC-${String(index+1).padStart(3,'0')}
+
+    </span>
+
+    <strong>${tc.title}</strong>
+
+</div>
 
         </button>
 

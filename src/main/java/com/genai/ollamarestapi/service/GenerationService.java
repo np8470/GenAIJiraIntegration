@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.genai.ollamarestapi.entity.GenerationHistory;
 import com.genai.ollamarestapi.exception.AIException;
 import com.genai.ollamarestapi.model.GenerateResponse;
 import com.genai.ollamarestapi.model.GenerationType;
@@ -58,19 +59,39 @@ public class GenerationService {
 
                     System.currentTimeMillis() - start;
 
-            historyService.saveGeneration(
+            //-----------------------------------------
+// Save into database
+//-----------------------------------------
 
-                    userService.getCurrentUser(),
+GenerationHistory history =
+        historyService.saveGeneration(
 
-                    storyKey,
+                userService.getCurrentUser(),
 
-                    story.acceptanceCriteria(),
+                storyKey,
 
-                    type,
+                story.acceptanceCriteria(),
 
-                    testCases,
+                type,
 
-                    duration);
+                testCases,
+
+                duration);
+
+//-----------------------------------------
+// Copy generated database IDs back
+//-----------------------------------------
+
+for (int i = 0; i < history.getTestCases().size(); i++) {
+
+    testCases.get(i).setId(
+
+            history.getTestCases()
+                    .get(i)
+                    .getId()
+                    .toString());
+
+}
 
             GenerateResponse response =
 
@@ -97,7 +118,7 @@ public class GenerationService {
                     userService.getCurrentUser(),
 
                     storyKey,
-                    
+
                     type,
 
                     System.currentTimeMillis() - start);

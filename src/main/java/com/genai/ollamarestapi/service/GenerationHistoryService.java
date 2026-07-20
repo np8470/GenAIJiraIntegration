@@ -13,6 +13,7 @@ import com.genai.ollamarestapi.repository.GenerationHistoryRepository;
 import com.genai.ollamarestapi.repository.GenerationTestCaseRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GenerationHistoryService {
@@ -159,7 +161,24 @@ public class GenerationHistoryService {
             history.addTestCase(entity);
         }
 
-        return repository.save(history);
+        //return repository.save(history);
+
+        GenerationHistory savedHistory = repository.save(history);
+
+// Copy generated database IDs back to DTOs
+
+for (int i = 0; i < savedHistory.getTestCases().size(); i++) {
+
+    GenerationTestCase savedTc =
+            savedHistory.getTestCases().get(i);
+
+    TestCase dto =
+            testCases.get(i);
+
+    dto.setId(savedTc.getId().toString());
+}
+
+return savedHistory;
     }
 
     public void saveFailure(
@@ -183,7 +202,7 @@ public class GenerationHistoryService {
 public void markUploaded(
         Long testCaseId,
         String jiraKey){
-
+        log.info("Updating TestCase {} -> {}", testCaseId, jiraKey);
     GenerationTestCase tc =
             testCaseRepository.findById(testCaseId)
                     .orElseThrow();
@@ -191,7 +210,8 @@ public void markUploaded(
     tc.setUploadedToJira(true);
 
     tc.setJiraTestcaseKey(jiraKey);
-
+    testCaseRepository.save(tc);
+    log.info("Saved {}", testCaseId);          
 }
 
 }

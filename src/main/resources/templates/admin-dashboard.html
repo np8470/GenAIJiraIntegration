@@ -484,9 +484,9 @@
 
                         <h3 class="fw-bold text-info mt-2">
 
-                            <span th:text="${#numbers.formatDecimal(dashboard.averageResponseTime,1,0)}"></span>
+                            <span th:text="${#numbers.formatDecimal(dashboard.averageResponseTime / 1000,1,2)}"></span>
 
-                            <small class="fs-6">ms</small>
+                            <small class="fs-6">sec</small>
 
                         </h3>
 
@@ -957,7 +957,7 @@
 
                     </div>
 
-                    <div class="col-lg-3">
+                    <!-- <div class="col-lg-3">
 
                         <a th:href="@{/admin/reports}" class="text-decoration-none">
 
@@ -989,7 +989,7 @@
 
                         </a>
 
-                    </div>
+                    </div> -->
 
                 </div>
 

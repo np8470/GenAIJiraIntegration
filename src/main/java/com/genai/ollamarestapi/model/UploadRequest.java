@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import com.genai.ollamarestapi.model.ai.TestCase;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +14,8 @@ public class UploadRequest {
 
     private String storyKey;
 
-    private List<TestCase> testCases;
+    //private List<TestCase> testCases;
+
+    private List<Long> testCaseIds;
 
 }

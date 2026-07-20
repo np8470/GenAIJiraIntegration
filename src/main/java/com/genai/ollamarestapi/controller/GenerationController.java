@@ -45,7 +45,7 @@ public class GenerationController {
             @RequestBody UploadRequest request) {
 
         log.info("Uploading {} test cases's Story key", request.getStoryKey());
-        log.info("Uploading {} test cases list", request.getTestCases());
+        log.info("Uploading {} test cases list", request.getTestCaseIds());
 
         return service.uploadSelectedToJira(request);
     }

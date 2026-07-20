@@ -47,47 +47,46 @@ async function uploadToJira() {
         //---------------------------------------
         // Build selected TestCase objects
         //---------------------------------------
-        const selectedTestCases = [];
-
-        selectedClientIds.forEach(clientId => {
-
-            const tc = generatedTestCases.find(
-
-                t => t.clientId === clientId
-
-            );
-
-            if (tc) {
-
-                selectedTestCases.push(tc);
-
-            } else {
-
-                console.warn("Test case not found for ClientId:", clientId);
-
-            }
-
-        });
-
         //---------------------------------------
-        // Safety check
-        //---------------------------------------
-        if (selectedTestCases.length === 0) {
+// Build selected database IDs
+//---------------------------------------
 
-            throw new Error("No valid test cases selected.");
+const selectedIds = [];
 
-        }
+selectedClientIds.forEach(clientId => {
 
-        //---------------------------------------
-        // Build request
-        //---------------------------------------
-        const request = {
+    const tc = generatedTestCases.find(
 
-            storyKey: document.getElementById("storyKey").value.trim(),
+        t => t.clientId === clientId
 
-            testCases: selectedTestCases
+    );
 
-        };
+    if (tc && tc.id) {
+
+        selectedIds.push(Number(tc.id));
+
+    }
+
+});
+
+if (selectedIds.length === 0) {
+
+    throw new Error("No valid test cases selected.");
+
+}
+
+//---------------------------------------
+// Build request
+//---------------------------------------
+
+const request = {
+
+    storyKey: document.getElementById("storyKey").value.trim(),
+
+    testCaseIds: selectedIds
+
+};
+
 
         console.log("Uploading Request:", request);
 
